@@ -3,14 +3,31 @@ import re
 
 class parseError(Exception):
     pass
+    
+class invalidUrl(Exception):
+    pass
 
 class WeatherData:
-    '''Class to hold pertinent weather data
-        Also contains methods to parse RSS feeds from w1.weather.gov'''
+    '''
+    Class to hold pertinent weather data
+    Also contains methods to parse RSS feeds from w1.weather.gov
+    Note:  As of this time, only RSS feeds from the above mentioned url will work with this
+    parser.
+    '''
     
+    dummyRSS = "w1.weather.gov/xml/current_obs/TEST.rss"
     
     def __init__(self, url):
+        '''
+        Constructor for WeatherData class.  Checks whether the input url is a valid
+        RSS feed from w1.weather.gov.  Initializes each weather data's variable to None, and 
+        then attempts to parse values.
+        '''
         self.url = url
+        
+        if not self.isValidRSS():
+            raise invalidUrl("The url given in the constructor parameter is invalid.")
+           
         
         self.conditions = None
         self.temperature = None
@@ -24,28 +41,34 @@ class WeatherData:
         
         self.weatherParser()
     
+    def isValidRSS(self):
+        '''
+        Determines if a given url is a valid RSS feed of w1.weather.gov.  Url must 
+        contain the string "w1.weather.gov/xml/current_obs/", and must obtain at least
+        one item entry for it to be valid.
+        '''
+        if self.url is not None and re.search("w1.weather.gov/xml/current_obs/", self.url):
+            d = feedparser.parse(self.url)
+            if len(d.entries) > 0:
+                return True
+        return False
+    
     def weatherParser(self):
-        # d = feedparser.parse(url)
-        # title = d.entries[0]['title']
-        # desc = d.entries[0]['description']
-        # weathercond, remainder = re.split(' and ', title)
-        # temp, location = re.split(' F at ', remainder)
-        # temp = float(temp)
-        # link, remainder2 = re.split('<br />', desc)
-        # description, remainder2 = re.split(' The pressure is ', remainder2)
-        # pressure, humidity = re.split(' mb and the humidity is ', remainder2)
-        # pressure = float(pressure)
-        # humidity = int(humidity[0:2])
+        '''
+        Parses weather data, and places it into the instance variables.  If the value was not correctly
+        parsed, the instance variable stays as None.
+        '''
+ 
         try:
             d = feedparser.parse(self.url)
             rss_title = d.entries[0]['title']
             rss_description = d.entries[0]['description']
+            
             #parsing from title tag, variables MUST be filled
             title_match = re.match(r"([\w\s]+) and ([\d]+) F at ([\w\s|,]+)", rss_title)
             self.conditions = title_match.group(1)
             self.temperature = title_match.group(2)
             self.location = title_match.group(3)
-           
            
             #parsing from description tag, variables may or may not be filled
             wind_match = re.search("Winds are (\w+) at (\d+(.)?\d+) MPH", rss_description)
@@ -70,16 +93,14 @@ class WeatherData:
                 self.last_updated = last_updated_match.group(1)
             
             self.display()
-            
-            
+                  
         except Exception:
-            pass
             raise parseError("An error occured in weatherParser().")
-    
-    
-        #return WeatherData(weathercond, temp, description, pressure, humidity)
-    
+
     def display(self):
+        '''
+        Displays parsed weather data
+        '''
         print("Conditions\t", self.conditions)
         print("Temperature\t", self.temperature)
         print("Location\t", self.location)
@@ -90,27 +111,9 @@ class WeatherData:
         print("Heat Index\t", self.heat_index)
         print("Last Updated\t", self.last_updated)
   
-def isValidRSS(url):
-    return 1
-        
-def weatherParser(url):
-    d = feedparser.parse(url)
-    title = d.entries[0]['title']
-    desc = d.entries[0]['description']
-    weathercond, remainder = re.split(' and ', title)
-    temp, location = re.split(' F at ', remainder)
-    temp = float(temp)
-    link, remainder2 = re.split('<br />', desc)
-    description, remainder2 = re.split(' The pressure is ', remainder2)
-    pressure, humidity = re.split(' mb and the humidity is ', remainder2)
-    pressure = float(pressure)
-    humidity = int(humidity[0:2])
-    
-    return WeatherData(weathercond, temp, description, pressure, humidity)
-    
-
+  
 def main():
-    testObj = WeatherData("http://w1.weather.gov/xml/current_obs/NSTU.rss")
+    testObj = WeatherData("http://w1.weather.gov/xml/current_obs/KEWR.rss")
     #weatherData = weatherParser("http://w1.weather.gov/xml/current_obs/KEWR.rss")
     #testObj.weatherParser()
 	

@@ -25,10 +25,9 @@ class WeatherData:
         '''
         self.url = url
         
-        if not self.isValidRSS():
+        if not WeatherData.isValidRSS(self.url):
             raise invalidUrl("The url given in the constructor parameter is invalid.")
            
-        
         self.conditions = None
         self.temperature = None
         self.location = None
@@ -41,14 +40,15 @@ class WeatherData:
         
         self.weatherParser()
     
-    def isValidRSS(self):
+    @staticmethod
+    def isValidRSS(url):
         '''
         Determines if a given url is a valid RSS feed of w1.weather.gov.  Url must 
         contain the string "w1.weather.gov/xml/current_obs/", and must obtain at least
-        one item entry for it to be valid.
+        one item entry for it to be valid.  This is a static method.
         '''
-        if self.url is not None and re.search("w1.weather.gov/xml/current_obs/", self.url):
-            d = feedparser.parse(self.url)
+        if url is not None and re.search("w1.weather.gov/xml/current_obs/", url):
+            d = feedparser.parse(url)
             if len(d.entries) > 0:
                 return True
         return False

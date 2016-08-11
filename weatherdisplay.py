@@ -1,4 +1,4 @@
-import weather_rss
+import weather_parser as wp
 import tkinter as tk
 from tkinter import ttk
 
@@ -7,7 +7,10 @@ class WeatherDisplay:
     
     def refreshData(self):
         print("refreshing data from rss")
-        self.weatherData = weather_rss.weatherParser(self.url)
+        try:
+            self.weatherData = wp.WeatherData(self.url)
+        except weather_parser.invalidUrl:
+            self.weatherData = None
         self.weatherData.display()
         self.setValues()
         self.root.update()
@@ -31,29 +34,42 @@ class WeatherDisplay:
     def setValues(self):
         print("updating values")
         self.title.set("Weather Forecast")
-        self.temp.set(self.weatherData.temp)
-        self.desc.set(self.weatherData.desc)
-        self.press.set(self.weatherData.press)
-        self.hum.set(self.weatherData.hum)
-        self.cond.set(self.weatherData.cond)
+        self.temperature.set(self.weatherData.temperature)
+        self.wind_speed.set(self.weatherData.wind_speed)
+        self.wind_direction.set(self.weatherData.wind_direction)
+        self.pressure.set(self.weatherData.pressure)
+        self.humidity.set(self.weatherData.humidity)
+        self.conditions.set(self.weatherData.conditions)
+        self.last_updated.set(self.weatherData.last_updated)
+        self.heat_index.set(self.weatherData.heat_index)
+        self.location.set(self.weatherData.location)
         
-    def __init__(self, url, root):
-        counter = 0
+    def __init__(self, root):
+    
+        self.url = None
+        self.url = "http://w1.weather.gov/xml/current_obs/KEWR.rss"
         self.root = root
         root.title("Weather Forecast")
-        self.url = url
         self.toplevel = None
         self.frame = tk.Frame(self.root)
         self.frame.grid(column=0, row=0)
         
         #get WeatherData object
-        self.weatherData = weather_rss.weatherParser(url)
+        try:
+            self.weatherData = wp.WeatherData(self.url)
+        except weather_parser.invalidUrl:
+            self.weatherData = None
+            
         self.title = tk.StringVar()
-        self.temp = tk.StringVar()
-        self.desc = tk.StringVar()
-        self.press = tk.StringVar()
-        self.hum = tk.StringVar()
-        self.cond = tk.StringVar()
+        self.temperature = tk.StringVar()
+        self.wind_speed = tk.StringVar()
+        self.wind_direction = tk.StringVar()
+        self.last_updated = tk.StringVar()
+        self.heat_index = tk.StringVar()
+        self.location = tk.StringVar()
+        self.pressure = tk.StringVar()
+        self.humidity = tk.StringVar()
+        self.conditions = tk.StringVar()
         
         self.setValues()
         
@@ -62,20 +78,28 @@ class WeatherDisplay:
         
         self.button_refresh.grid(column=0, row=2)
         self.button_change_rss.grid(column=1, row=2)
-                
-        self.title_label = tk.Label(self.frame, textvariable=self.title)
-        self.temp_label = tk.Label(self.frame, textvariable=self.temp)  
-        self.cond_label = tk.Label(self.frame, textvariable=self.cond)        
-        self.press_label = tk.Label(self.frame, textvariable=self.press)       
-        self.hum_label = tk.Label(self.frame, textvariable=self.hum)      
-        self.desc_label = tk.Label(self.frame, textvariable=self.desc)
         
-        self.desc_label.grid(column=0, row=5)
+        self.title_label = tk.Label(self.frame, textvariable=self.title)
+        self.location_label = tk.Label(self.frame, textvariable=self.location)
+        self.wind_speed_label = tk.Label(self.frame, textvariable=self.wind_speed)
+        self.wind_direction_label = tk.Label(self.frame, textvariable=self.wind_direction)
+        self.heat_index_label = tk.Label(self.frame, textvariable=self.heat_index)
+        self.temperature_label = tk.Label(self.frame, textvariable=self.temperature)  
+        self.conditions_label = tk.Label(self.frame, textvariable=self.conditions)        
+        self.pressure_label = tk.Label(self.frame, textvariable=self.pressure)       
+        self.humidity_label = tk.Label(self.frame, textvariable=self.humidity)      
+        self.last_updated_label = tk.Label(self.frame, textvariable=self.last_updated)
+        
         self.title_label.grid(column=0, row=1)
-        self.temp_label.grid(column=1, row=3)
-        self.cond_label.grid(column=0, row=3)
-        self.press_label.grid(column=0, row=4)
-        self.hum_label.grid(column=1, row=4)
+        self.wind_speed_label.grid(column=0, row=5)
+        self.wind_direction_label.grid(column=1, row=5) 
+        self.temperature_label.grid(column=1, row=3)
+        self.conditions_label.grid(column=0, row=3)
+        self.pressure_label.grid(column=0, row=4)
+        self.humidity_label.grid(column=1, row=4)
+        self.heat_index_label.grid(column=0, row=6)
+        self.last_updated_label.grid(column=0, row=7)
+        self.location_label.grid(column=1, row=7)
     
 class ChangeRSSWindow(tk.Toplevel):
 
@@ -83,7 +107,7 @@ class ChangeRSSWindow(tk.Toplevel):
         #check validity of URL here
         #if okay, exit out of window and save new url otherwise show warning message
         rss = self.rssEntry.get()
-        if weather_rss.isValidRSS(rss) == 1:
+        if wp.WeatherData.isValidRSS(rss) is True:
             self.app.getTopLevelRSS(rss)
             self.app.toplevel = None
             self.destroy()
@@ -104,7 +128,7 @@ class ChangeRSSWindow(tk.Toplevel):
 
 def main():
     root = tk.Tk()
-    display = WeatherDisplay("http://w1.weather.gov/xml/current_obs/KEWR.rss", root)
+    display = WeatherDisplay(root)
     display.weatherData.display()
     root.mainloop()
     

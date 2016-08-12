@@ -52,14 +52,14 @@ class WeatherDisplay:
         root.title("Weather Forecast")
         self.toplevel = None
         self.frame = tk.Frame(self.root)
-        self.frame.grid(column=0, row=0)
+        self.frame.grid(column=0, row=0, sticky=tk.N+tk.S+tk.W+tk.E)
         
         #get WeatherData object
         try:
             self.weatherData = wp.WeatherData(self.url)
         except weather_parser.invalidUrl:
             self.weatherData = None
-            
+           
         self.title = tk.StringVar()
         self.temperature = tk.StringVar()
         self.wind_speed = tk.StringVar()
@@ -76,9 +76,6 @@ class WeatherDisplay:
         self.button_refresh = tk.Button(self.frame, text="Refresh", command=self.refreshData)
         self.button_change_rss = tk.Button(self.frame, text="Change RSS Feed", command=self.changeRSS)
         
-        self.button_refresh.grid(column=0, row=2)
-        self.button_change_rss.grid(column=1, row=2)
-        
         self.title_label = tk.Label(self.frame, textvariable=self.title)
         self.location_label = tk.Label(self.frame, textvariable=self.location)
         self.wind_speed_label = tk.Label(self.frame, textvariable=self.wind_speed)
@@ -90,16 +87,23 @@ class WeatherDisplay:
         self.humidity_label = tk.Label(self.frame, textvariable=self.humidity)      
         self.last_updated_label = tk.Label(self.frame, textvariable=self.last_updated)
         
-        self.title_label.grid(column=0, row=1)
-        self.wind_speed_label.grid(column=0, row=5)
-        self.wind_direction_label.grid(column=1, row=5) 
-        self.temperature_label.grid(column=1, row=3)
-        self.conditions_label.grid(column=0, row=3)
-        self.pressure_label.grid(column=0, row=4)
-        self.humidity_label.grid(column=1, row=4)
-        self.heat_index_label.grid(column=0, row=6)
-        self.last_updated_label.grid(column=0, row=7)
-        self.location_label.grid(column=1, row=7)
+        self.title_label.grid(column=0, row=0, columnspan=2, sticky=tk.N+tk.S+tk.E+tk.W)
+        self.button_refresh.grid(column=0, row=1)
+        self.button_change_rss.grid(column=1, row=1)
+        self.temperature_label.grid(column=1, row=2)
+        self.conditions_label.grid(column=0, row=2)
+        self.pressure_label.grid(column=0, row=3)
+        self.humidity_label.grid(column=1, row=3)
+        self.wind_speed_label.grid(column=0, row=4)
+        self.wind_direction_label.grid(column=1, row=4) 
+        self.heat_index_label.grid(column=0, row=5)
+        self.last_updated_label.grid(column=0, row=6)
+        self.location_label.grid(column=1, row=6)
+        
+        for x in range(7):
+            self.frame.grid_rowconfigure(x, weight=1)
+        for y in range(2):
+            self.frame.grid_columnconfigure(y, weight=1)
     
 class ChangeRSSWindow(tk.Toplevel):
 
@@ -128,6 +132,8 @@ class ChangeRSSWindow(tk.Toplevel):
 
 def main():
     root = tk.Tk()
+    root.columnconfigure(0, weight=1)
+    root.rowconfigure(0, weight=1)
     display = WeatherDisplay(root)
     display.weatherData.display()
     root.mainloop()

@@ -12,22 +12,18 @@ class WeatherData:
     Class to hold pertinent weather data
     Also contains methods to parse RSS feeds from w1.weather.gov
     Note:  As of this time, only RSS feeds from the above mentioned url will work with this
-    parser.
+    parser.  Mutable.
     '''
     
     dummyRSS = "w1.weather.gov/xml/current_obs/TEST.rss"
     
-    def __init__(self, url):
+    def __init__(self, url=None):
         '''
         Constructor for WeatherData class.  Checks whether the input url is a valid
         RSS feed from w1.weather.gov.  Initializes each weather data's variable to None, and 
         then attempts to parse values.
         '''
-        self.url = url
-        
-        if not WeatherData.isValidRSS(self.url):
-            raise invalidUrl("The url given in the constructor parameter is invalid.")
-           
+        self.url = url     
         self.conditions = None
         self.temperature = None
         self.location = None
@@ -38,7 +34,8 @@ class WeatherData:
         self.heat_index = None
         self.last_updated = None
         
-        self.weatherParser()
+        if WeatherData.isValidRSS(self.url):
+            self.weatherParser()
     
     @staticmethod
     def isValidRSS(url):
@@ -53,6 +50,13 @@ class WeatherData:
                 return True
         return False
     
+    def updateValues(self, newurl):
+        '''
+        Replaces self.url with new url, and then updates the weather data
+        '''
+        self.url = newurl
+        self.weatherParser()
+        
     def weatherParser(self):
         '''
         Parses weather data, and places it into the instance variables.  If the value was not correctly
@@ -71,7 +75,7 @@ class WeatherData:
             self.location = title_match.group(3)
            
             #parsing from description tag, variables may or may not be filled
-            wind_match = re.search("Winds are (\w+) at (\d+(.)?\d+) MPH", rss_description)
+            wind_match = re.search("Winds are ([\w\s]+) at (\d+(.)?\d+)", rss_description)
             if wind_match:
                 self.wind_direction = wind_match.group(1)
                 self.wind_speed = wind_match.group(2)

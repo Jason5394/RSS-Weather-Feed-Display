@@ -7,10 +7,7 @@ class WeatherDisplay:
     
     def refreshData(self):
         print("refreshing data from rss")
-        try:
-            self.weatherData = wp.WeatherData(self.url)
-        except weather_parser.invalidUrl:
-            self.weatherData = None
+        self.weatherData = wp.WeatherData(self.url)
         self.weatherData.display()
         self.setValues()
         self.root.update()
@@ -122,12 +119,21 @@ class ChangeRSSWindow(tk.Toplevel):
         tk.Toplevel.__init__(self,master)
         self.app = app
         self.frame = tk.Frame(self)
+        self.frame.grid(column=0, row=0, sticky=tk.N+tk.S+tk.W+tk.E)
+        self.frame.columnconfigure(0, weight=1)
+        self.frame.rowconfigure(0, weight=1)
         self.frame.grid(column=0, row=0)
         tk.Label(self.frame, text="Enter the url of the RSS feed:").grid(column=0, row=0)
-        self.rssEntry = tk.Entry(self.frame)
+        self.rssEntry = tk.Entry(self.frame, width=50)
         self.rssEntry.grid(column=0, row=1)
-        self.submitRSSButton = tk.Button(self.frame, text="Submit", command=self.pressedSubmit)
+        self.submitRSSButton = tk.Button(self.frame, text="Submit")
         self.submitRSSButton.grid(column=1, row=1)
+        
+        #allow labels to resize along with resizing windows
+        for x in range(2):
+            self.grid_rowconfigure(x, weight=1)
+        for y in range(2):
+            self.grid_columnconfigure(y, weight=1)
         
 
 def main():

@@ -33,6 +33,7 @@ class WeatherData:
         self.humidity = None
         self.heat_index = None
         self.last_updated = None
+        self.img_url = None
         
         if WeatherData.isValidRSS(self.url):
             self.weatherParser()
@@ -96,6 +97,10 @@ class WeatherData:
             if last_updated_match:
                 self.last_updated = last_updated_match.group(1)
             
+            img_url_match = re.search('<img src="([^"]+)"', rss_description)
+            if img_url_match:
+                self.img_url = img_url_match.group(1)
+            
             self.display()
                   
         except Exception:
@@ -114,6 +119,7 @@ class WeatherData:
         print("Humidity\t", self.humidity)
         print("Heat Index\t", self.heat_index)
         print("Last Updated\t", self.last_updated)
+        print("Img url\t", self.img_url)
   
   
 def main():

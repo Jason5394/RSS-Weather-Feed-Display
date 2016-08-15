@@ -1,6 +1,11 @@
 import tkinter as tk
+from PIL import Image, ImageTk
+import requests
+import io
 from tkinter import ttk
 import weather_parser as wp
+
+
 
 class WeatherView(tk.Frame):
     '''
@@ -15,6 +20,8 @@ class WeatherView(tk.Frame):
         
         self.refresh_button = tk.Button(self, text="Refresh")
         self.change_rss_button = tk.Button(self, text="Change RSS Feed")
+        self.conditions_img = None
+        
         
         #declare each data member as a StringVar
         self.temperature = tk.StringVar()
@@ -45,6 +52,7 @@ class WeatherView(tk.Frame):
         self.pressure_label = tk.Label(self, textvariable=self.pressure)       
         self.humidity_label = tk.Label(self, textvariable=self.humidity)      
         self.last_updated_label = tk.Label(self, textvariable=self.last_updated)
+        self.conditions_img_label = tk.Label(self, image=self.conditions_img)
         
         #set initial placements of the labels
         self.title_label.grid(column=0, row=0, columnspan=2)
@@ -52,13 +60,14 @@ class WeatherView(tk.Frame):
         self.change_rss_button.grid(column=1, row=1)
         self.temperature_label.grid(column=1, row=2)
         self.conditions_label.grid(column=0, row=2)
-        self.pressure_label.grid(column=0, row=3)
-        self.humidity_label.grid(column=1, row=3)
-        self.wind_speed_label.grid(column=0, row=4)
-        self.wind_direction_label.grid(column=1, row=4) 
-        self.heat_index_label.grid(column=0, row=5)
-        self.last_updated_label.grid(column=0, row=6)
-        self.location_label.grid(column=1, row=6)
+        self.conditions_img_label.grid(column=0, row=3)
+        self.pressure_label.grid(column=0, row=4)
+        self.humidity_label.grid(column=1, row=4)
+        self.wind_speed_label.grid(column=0, row=5)
+        self.wind_direction_label.grid(column=1, row=5) 
+        self.heat_index_label.grid(column=0, row=6)
+        self.last_updated_label.grid(column=0, row=7)
+        self.location_label.grid(column=1, row=7)
         
         #allow labels to resize along with resizing windows
         for x in range(7):
@@ -77,6 +86,11 @@ class WeatherView(tk.Frame):
         self.last_updated.set(weatherObj.last_updated)
         self.heat_index.set(weatherObj.heat_index)
         self.location.set(weatherObj.location)
+        
+        r = requests.get(weatherObj.img_url)
+        img = ImageTk.PhotoImage(Image.open(io.BytesIO(r.content)))
+        self.conditions_img_label.configure(image=img)
+        self.conditions_img_label.image = img
         
         
 class ChangeRSSWindow(tk.Toplevel):

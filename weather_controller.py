@@ -23,6 +23,7 @@ class WeatherController:
         return None
     
     def valuesChanged(self, url):
+        '''Listener that changes the weather data in the application'''
         weatherObj = wp.WeatherData(url)
         self.mainframe.setValues(weatherObj)
         

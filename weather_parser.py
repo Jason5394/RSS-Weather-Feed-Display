@@ -1,5 +1,6 @@
 import feedparser
 import re
+import urllib.request, urllib.response
 
 class parseError(Exception):
     pass
@@ -34,6 +35,7 @@ class WeatherData:
         self.heat_index = None
         self.last_updated = None
         self.img_url = None
+        self.rss_feed = None
         
         if WeatherData.isValidRSS(self.url):
             self.weatherParser()
@@ -101,6 +103,11 @@ class WeatherData:
             if img_url_match:
                 self.img_url = img_url_match.group(1)
             
+            #retrieve raw rss feed
+            file = urllib.request.urlopen(self.url)
+            self.rss_feed = file.read()
+            print(self.rss_feed)
+            
             self.display()
                   
         except Exception:
@@ -121,7 +128,12 @@ class WeatherData:
         print("Last Updated\t", self.last_updated)
         print("Img url\t", self.img_url)
   
-  
+def toString(string):
+    if string is None:
+        return "n/a"
+    else:
+        return str(string)
+
 def main():
     testObj = WeatherData("http://w1.weather.gov/xml/current_obs/KEWR.rss")
     #weatherData = weatherParser("http://w1.weather.gov/xml/current_obs/KEWR.rss")

@@ -91,20 +91,21 @@ class WeatherView(tk.Frame):
     def setValues(self, weatherObj):
         print("updating values")
         degree_sign= u'\N{DEGREE SIGN}'
-        self.temperature.set(weatherObj.temperature+degree_sign)
-        self.wind.set(weatherObj.wind_speed + " MPH " + weatherObj.wind_direction)
+        self.temperature.set(wp.toString(weatherObj.temperature)+degree_sign)
+        self.wind.set(wp.toString(weatherObj.wind_speed) + " MPH " + wp.toString(weatherObj.wind_direction))
         #self.wind_direction.set(weatherObj.wind_direction)
-        self.pressure.set(weatherObj.pressure + " mb")
-        self.humidity.set(weatherObj.humidity + "%")
-        self.conditions.set(weatherObj.conditions)
-        self.last_updated.set(weatherObj.last_updated)
-        self.heat_index.set(weatherObj.heat_index)
-        self.location.set(weatherObj.location)
+        self.pressure.set(wp.toString(weatherObj.pressure) + " mb")
+        self.humidity.set(wp.toString(weatherObj.humidity) + "%")
+        self.conditions.set(wp.toString(weatherObj.conditions))
+        self.last_updated.set(wp.toString(weatherObj.last_updated))
+        self.heat_index.set(wp.toString(weatherObj.heat_index))
+        self.location.set(wp.toString(weatherObj.location))
         
-        r = requests.get(weatherObj.img_url)
-        img = ImageTk.PhotoImage(Image.open(io.BytesIO(r.content)))
-        self.conditions_img_label.configure(image=img)
-        self.conditions_img_label.image = img
+        if weatherObj.img_url is not None:
+            r = requests.get(weatherObj.img_url)
+            img = ImageTk.PhotoImage(Image.open(io.BytesIO(r.content)))
+            self.conditions_img_label.configure(image=img)
+            self.conditions_img_label.image = img
         
         
 class ChangeRSSWindow(tk.Toplevel):

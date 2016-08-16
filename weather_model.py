@@ -13,6 +13,9 @@ class WeatherModel:
         self.url = url
         self.weatherObj = wp.WeatherData(self.url)
         pub.sendMessage("valuesChanged", url=str(self.url))
- 
+
     def getUrl(self):   
         return self.url
+        
+    def getWeatherObj(self):
+        return self.weatherObj

@@ -72,16 +72,20 @@ class WeatherData:
             rss_description = d.entries[0]['description']
             
             #parsing from title tag, variables MUST be filled
-            title_match = re.match(r"([\w\s]+) and ([\d]+) F at ([\w\s|,]+)", rss_title)
-            self.conditions = title_match.group(1)
-            self.temperature = title_match.group(2)
-            self.location = title_match.group(3)
+            title_match = re.match(r"([\w\s]+) and ([\d]+) F at (.+)", rss_title)
+            if title_match:
+                self.conditions = title_match.group(1)
+                self.temperature = title_match.group(2)
+                self.location = title_match.group(3)
            
             #parsing from description tag, variables may or may not be filled
-            wind_match = re.search("Winds are ([\w\s]+) at (\d+(.)?\d+)", rss_description)
-            if wind_match:
-                self.wind_direction = wind_match.group(1)
-                self.wind_speed = wind_match.group(2)
+            wind_direction_match = re.search("Winds are ([\w\s]+)(?= at)", rss_description)
+            if wind_direction_match:
+                self.wind_direction = wind_direction_match.group(1)
+                
+            wind_speed_match = re.search("Winds are [\w\s]+ at (\d+[.]?\d+)", rss_description)
+            if wind_speed_match:
+                self.wind_speed = wind_speed_match.group(1)
            
             pressure_match = re.search("pressure is (\d+(.)?\d+) mb", rss_description)
             if pressure_match:

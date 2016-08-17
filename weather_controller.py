@@ -1,5 +1,6 @@
 import weather_model as model
 import weather_view as view
+import menu
 import weather_parser as wp
 import tkinter as tk
 from tkinter import ttk
@@ -30,7 +31,8 @@ class WeatherController:
         
     def pressedUpdate(self):
         weatherObj = self.model.getWeatherObj()
-        self.mainframe.setValues(weatherObj)
+        if weatherObj is not None:
+            self.mainframe.setValues(weatherObj)
         
     def pressedChangeRss(self):
         print("attempting to change rss feed")
@@ -81,7 +83,5 @@ def main():
     root.rowconfigure(0, weight=1)
     controller = WeatherController(root)
     root.mainloop()
-    
-    
-#if __name__ == "__main__": main()
-main()
+     
+if __name__ == "__main__": main()

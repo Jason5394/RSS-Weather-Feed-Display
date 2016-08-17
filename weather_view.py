@@ -1,11 +1,10 @@
-import tkinter as tk
-from PIL import Image, ImageTk
+import menu
 import requests
 import io
-from tkinter import ttk
 import weather_parser as wp
-
-
+import tkinter as tk
+from PIL import Image, ImageTk
+from tkinter import ttk
 
 class WeatherView(tk.Frame):
     '''
@@ -15,11 +14,13 @@ class WeatherView(tk.Frame):
         tk.Frame.__init__(self, root, *args, **kwargs)
         self.root = root
         self.grid(column=0, row=0, sticky=tk.N+tk.S+tk.W+tk.E)
+        self.appMenu = menu.AppMenu(self.root)
         self.toplevel_1 = None
         self.toplevel_2 = None
         root.title("Weather Forecast")
         root.geometry("450x280")
         root.resizable(0,0)
+        root.config(menu=self.appMenu)
         self.refresh_button = tk.Button(self, text="Update")
         self.change_rss_button = tk.Button(self, text="Change RSS feed")
         self.show_src_button = tk.Button(self, text="Show source")

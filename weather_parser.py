@@ -110,7 +110,7 @@ class WeatherData:
             #retrieve raw rss feed
             file = urllib.request.urlopen(self.url)
             self.rss_feed = file.read()
-            print(self.rss_feed)
+            #print(self.rss_feed)
             
             self.display()
                   

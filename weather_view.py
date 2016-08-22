@@ -1,26 +1,25 @@
-import menu
 import requests
 import io
 import weather_parser as wp
 import tkinter as tk
 from PIL import Image, ImageTk
 from tkinter import ttk
+import weather_menu as wm
 
 class WeatherView(tk.Frame):
     '''
     Main window in the MVC of the application.  Displays the parsed information onto the screen
     '''
-    def __init__(self, root, weatherObj=None, *args, **kwargs):
+    def __init__(self, root, weatherdict=None, *args, **kwargs):
         tk.Frame.__init__(self, root, *args, **kwargs)
         self.root = root
         self.grid(column=0, row=0, sticky=tk.N+tk.S+tk.W+tk.E)
-        self.appMenu = menu.AppMenu(self.root)
-        self.toplevel_1 = None
-        self.toplevel_2 = None
+        #self.appMenu = menu.AppMenu(self.root)
+        self.toplevels = {"changeRSS": None, "showFeed": None}
         root.title("Weather Forecast")
         root.geometry("450x280")
         root.resizable(0,0)
-        root.config(menu=self.appMenu)
+        #root.config(menu=self.appMenu)
         self.refresh_button = tk.Button(self, text="Update")
         self.change_rss_button = tk.Button(self, text="Change RSS feed")
         self.show_src_button = tk.Button(self, text="Show source")
@@ -39,11 +38,11 @@ class WeatherView(tk.Frame):
         self.conditions = tk.StringVar()
         
         #if user supplied weather object, set that and update values in the respective StringVars
-        if type(weatherObj) is wp.WeatherData:
-            self.weatherObj = weatherObj
-            self.setValues(weatherObj)
+        if weatherdict is not None:
+            self.weatherdict = weatherdict
+            self.setValues(self.weatherdict)
         else:
-            self.weatherObj = wp.WeatherData()
+            self.weatherdict = {}
             
         #create a label for each data member
         self.title_label = tk.Label(self, text="Weather Forecast", font="bold")
@@ -51,7 +50,7 @@ class WeatherView(tk.Frame):
         self.wind_label = tk.Label(self, textvariable=self.wind)
         self.heat_index_label = tk.Label(self, textvariable=self.heat_index)
         self.temperature_label = tk.Label(self, textvariable=self.temperature, font="Calibri, 24")  
-        self.conditions_label = tk.Label(self, textvariable=self.conditions, font="Calibri, 20")        
+        self.conditions_label = tk.Label(self, textvariable=self.conditions, font="Calibri, 18")        
         self.pressure_label = tk.Label(self, textvariable=self.pressure)       
         self.humidity_label = tk.Label(self, textvariable=self.humidity)      
         self.last_updated_label = tk.Label(self, textvariable=self.last_updated)
@@ -65,7 +64,7 @@ class WeatherView(tk.Frame):
         self.wind_static_label = tk.Label(self, text="Wind conditions: ")
         
         #set grid placements of the labels
-        self.title_label.grid(column=1, row=0)
+        self.title_label.grid(column=0, row=0, columnspan=3)
         self.refresh_button.grid(column=0, row=1, sticky=tk.E)
         self.change_rss_button.grid(column=1, row=1)
         self.show_src_button.grid(column=2, row=1, sticky=tk.W)
@@ -91,47 +90,53 @@ class WeatherView(tk.Frame):
         for y in range(3):
             self.grid_columnconfigure(y, weight=1)
         
-    def setValues(self, weatherObj):
+    def setValues(self, weatherdict):
         print("updating values")
+        self.weatherdict = weatherdict
         degree_sign= u'\N{DEGREE SIGN}'
-        self.temperature.set(wp.toString(weatherObj.temperature)+degree_sign)
-        self.pressure.set(wp.toString(weatherObj.pressure) + " mb")
-        self.humidity.set(wp.toString(weatherObj.humidity) + "%")
-        self.conditions.set(wp.toString(weatherObj.conditions))
-        self.last_updated.set(wp.toString(weatherObj.last_updated))
-        self.heat_index.set(wp.toString(weatherObj.heat_index))
-        self.location.set(wp.toString(weatherObj.location))
+        self.temperature.set(wp.toString(weatherdict["temperature"])+degree_sign)
+        self.pressure.set(wp.toString(weatherdict["pressure"]) + " mb")
+        self.humidity.set(wp.toString(weatherdict["humidity"]) + "%")
+        self.conditions.set(wp.toString(weatherdict["conditions"]))
+        self.last_updated.set(wp.toString(weatherdict["last_updated"]))
+        self.heat_index.set(wp.toString(weatherdict["heat_index"]))
+        self.location.set(wp.toString(weatherdict["location"]))
         
         wind_string = ""
         wind_exists = False
-        if weatherObj.wind_direction is not None:
-            wind_string += weatherObj.wind_direction + " "
+        if weatherdict["wind_direction"] is not None:
+            wind_string += weatherdict["wind_direction"] + " "
             wind_exists = True
-        if weatherObj.wind_speed is not None:
-            wind_string += weatherObj.wind_speed + " MPH"
+        if weatherdict["wind_speed"] is not None:
+            wind_string += weatherdict["wind_speed"] + " MPH"
             wind_exists = True
         if wind_exists is True:
             self.wind.set(wind_string)
         else:
             self.wind.set("n/a")
+                  
+        if weatherdict["img_url"] is not None:
+            r = requests.get(weatherdict["img_url"])
+            with Image.open(io.BytesIO(r.content)) as fp:
+                img = ImageTk.PhotoImage(fp)
+                self.conditions_img_label.configure(image=img)
+                self.conditions_img_label.image = img
             
-        
-        if weatherObj.img_url is not None:
-            r = requests.get(weatherObj.img_url)
-            img = ImageTk.PhotoImage(Image.open(io.BytesIO(r.content)))
-            self.conditions_img_label.configure(image=img)
-            self.conditions_img_label.image = img
             
-            
-class ShowSourceWindow(tk.Toplevel):
-    def __init__(self, root):
-        tk.Toplevel.__init__(self, root)
+class FormTopLevel(tk.Toplevel):
+    def __init__(self, root, **kwargs):
+        tk.Toplevel.__init__(self, root, **kwargs)
         self.root = root
         self.resizable(0,0)
         self.frame = tk.Frame(self)
         self.frame.grid(column=0, row=0)
         self.frame.columnconfigure(0, weight=1)
         self.frame.rowconfigure(0, weight=1)
+        
+            
+class ShowSourceWindow(FormTopLevel):
+    def __init__(self, root, **kwargs):
+        FormTopLevel.__init__(self, root, **kwargs)
         
         tk.Label(self.frame, text="RSS Source", font="bold").grid(column=0, row=0)
         self.rss_src = tk.StringVar()
@@ -140,17 +145,12 @@ class ShowSourceWindow(tk.Toplevel):
         
     def setSrc(self, src_string):
         self.rss_src.set(src_string)
+        
  
-class ChangeRSSWindow(tk.Toplevel):
+class ChangeRSSWindow(FormTopLevel):
  
-    def __init__(self, root):
-        tk.Toplevel.__init__(self,root)
-        self.root = root
-        self.resizable(0,0)
-        self.frame = tk.Frame(self)
-        self.frame.grid(column=0, row=0)
-        self.frame.columnconfigure(0, weight=1)
-        self.frame.rowconfigure(0, weight=1)
+    def __init__(self, root, **kwargs):
+        FormTopLevel.__init__(self,root, **kwargs)
         
         tk.Label(self.frame, text="Enter the url of the RSS feed:").grid(column=0, row=0)
         self.rss_entry = tk.Entry(self.frame, width=50)

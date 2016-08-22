@@ -7,15 +7,37 @@ class WeatherModel:
     '''
     def __init__(self):
         self.weatherObj = None
-        self.url = None
+        self.weather_dict = None
+        self.url = None   
+        self.saved_urls = []
+        self.saved_names = []
+        self.saved_urls.append("test")
+        self.saved_names.append("http://w1.weather.gov/xml/current_obs/NSTU.rss")
         
     def setWeather(self, url):
         self.url = url
         self.weatherObj = wp.WeatherData(self.url)
-        pub.sendMessage("valuesChanged", url=str(self.url))
+        self.weather_dict = self.weatherObj.__dict__ #dictionary that contains all weatherObj attributes
+        pub.sendMessage("valuesChanged", weather_dict=self.weather_dict)
 
+    def addSavedUrl(self, saved_url, saved_name):
+        print("saved_url:", saved_url, "saved_name:", saved_name)
+        if saved_name in self.saved_names:
+            print("rssfeedalreadyexists")
+            pub.sendMessage("invalidSave", message="RSS feed name already exists.")
+        elif saved_url in self.saved_urls:
+            pub.sendMessage("invalidSave", message="RSS url already exists.")
+        else:
+            print("validsave")
+            self.saved_urls.insert(0, saved_url)
+            self.saved_names.insert(0, saved_name)
+            pub.sendMessage("validSave")
+        
     def getUrl(self):   
         return self.url
         
     def getWeatherObj(self):
         return self.weatherObj
+        
+    def getWeatherDict(self):
+        return self.weather_dict

@@ -125,7 +125,7 @@ class SaveWindow(view.FormTopLevel):
         
     def invalidSave(self, message):
         #if self.error_toplevel is None:
-        self.error_toplevel = tkinter.messagebox.showerror("Error", message, parent=self)
+        self.error_toplevel = tkinter.messagebox.showerror("Error", message, parent=self.root.toplevels["save"])
         #self.error_toplevel.protocol("WM_DELETE_WINDOW", self.removeErrorTopLevel)
     
     def removeErrorTopLevel(self):

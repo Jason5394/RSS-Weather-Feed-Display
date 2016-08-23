@@ -3,6 +3,7 @@ import weather_menu as wm
 import weather_view as view
 import weather_parser as wp
 import tkinter as tk
+import tkinter.messagebox
 from pubsub import pub
 
 class WeatherController:
@@ -63,7 +64,8 @@ class WeatherController:
             self.removeTopLevel("changeRSS")
         else:
             print("invalid url")
-            
+            self.error_message = tkinter.messagebox.showerror("Error", "RSS feed is invalid.", parent=self.mainframe.toplevels["changeRSS"])
+                      
     def pressedShowSrc(self):
         if self.mainframe.toplevels["showFeed"] is None:
             weatherdict = self.model.getWeatherDict()

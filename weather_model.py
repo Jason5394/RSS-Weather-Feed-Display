@@ -11,8 +11,8 @@ class WeatherModel:
         self.url = None   
         self.saved_urls = []
         self.saved_names = []
-        self.saved_urls.append("test")
-        self.saved_names.append("http://w1.weather.gov/xml/current_obs/NSTU.rss")
+        self.saved_urls.append("http://w1.weather.gov/xml/current_obs/NSTU.rss")
+        self.saved_names.append("test")
         
     def setWeather(self, url):
         self.url = url
@@ -23,7 +23,6 @@ class WeatherModel:
     def addSavedUrl(self, saved_url, saved_name):
         print("saved_url:", saved_url, "saved_name:", saved_name)
         if saved_name in self.saved_names:
-            print("rssfeedalreadyexists")
             pub.sendMessage("invalidSave", message="RSS feed name already exists.")
         elif saved_url in self.saved_urls:
             pub.sendMessage("invalidSave", message="RSS url already exists.")

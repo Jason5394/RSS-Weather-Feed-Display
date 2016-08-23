@@ -135,18 +135,15 @@ class FormTopLevel(tk.Toplevel):
         
             
 class ShowSourceWindow(FormTopLevel):
-    def __init__(self, root, **kwargs):
+    def __init__(self, root, src="", **kwargs):
         FormTopLevel.__init__(self, root, **kwargs)
         
+        self.rss_src = src
         tk.Label(self.frame, text="RSS Source", font="bold").grid(column=0, row=0)
-        self.rss_src = tk.StringVar()
-        rss_src_label = tk.Label(self.frame, textvariable=self.rss_src)
+        rss_src_label = tk.Label(self.frame, text=self.rss_src)
         rss_src_label.grid(column=0, row=1)
-        
-    def setSrc(self, src_string):
-        self.rss_src.set(src_string)
-        
- 
+  
+  
 class ChangeRSSWindow(FormTopLevel):
  
     def __init__(self, root, **kwargs):

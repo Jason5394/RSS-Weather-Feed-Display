@@ -1,7 +1,9 @@
 import tkinter as tk
+import tkinter.messagebox
 import weather_view as view
 import error_message as em
 from pubsub import pub
+
 
 class AppMenu(tk.Menu):
     def __init__(self, master, model, **kwargs): #see if this can be changed 
@@ -28,12 +30,14 @@ class AppMenu(tk.Menu):
         self.weatherdict = weatherdict
     
     def removeTopLevel(self, key):
+        print("key:", key)
         '''function called when window that changes rss feed is destroyed.'''
         self.toplevels[key].destroy()
         self.toplevels[key] = None 
         
     def initTopLevel(self, key, Class, *args):
         if self.toplevels[key] is None:
+            print("making toplevel:", Class)
             self.toplevels[key] = Class(self, *args)
             self.toplevels[key].protocol("WM_DELETE_WINDOW", lambda: self.removeTopLevel(key))
             return True
@@ -45,10 +49,16 @@ class AppMenu(tk.Menu):
             pass
         
     def saveUrl(self):
-        print("filemenu button: save")
-        if self.initTopLevel("save", SaveWindow, self.weatherdict):
-            print("True")
-            pass
+        # print("filemenu button: save")
+        # if self.initTopLevel("save", SaveWindow, self.weatherdict):
+            # print("True")
+        # else:
+            # print("False")'
+    
+        if self.toplevels["save"] is None:
+            print("making toplevel: save")
+            self.toplevels["save"] = SaveWindow(self, self.weatherdict)
+            self.toplevels["save"].protocol("WM_DELETE_WINDOW", lambda: self.removeTopLevel("save"))
         
     def showInstructions(self):
         print("helpmenu button: help")
@@ -77,9 +87,12 @@ class SaveWindow(view.FormTopLevel):
         self.error_toplevel = None
         self.root = root
         default_entry = ""
+        print (weatherdict)
         if weatherdict:
             default_entry = weatherdict["url"]
             print("url:", default_entry)
+        
+        self.frame.config(padx=4)
         
         #construct second frame
         self.frame2 = tk.Frame(self, padx=2, pady=2)
@@ -111,17 +124,16 @@ class SaveWindow(view.FormTopLevel):
         self.root.model.addSavedUrl(url, name)
         
     def invalidSave(self, message):
-        if self.error_toplevel is None:
-            self.error_toplevel = em.ErrorMessage(self, message, self.removeErrorTopLevel)
-            self.error_toplevel.protocol("WM_DELETE_WINDOW", self.removeErrorTopLevel())
+        #if self.error_toplevel is None:
+        self.error_toplevel = tkinter.messagebox.showerror("Error", message, parent=self)
+        #self.error_toplevel.protocol("WM_DELETE_WINDOW", self.removeErrorTopLevel)
     
     def removeErrorTopLevel(self):
         self.error_toplevel.destroy()
         self.error_toplevel = None
         
     def validSave(self):
-        self.destroy()
-        self.root.toplevels["save"] = None
+        self.root.removeTopLevel("save")
 
         
         

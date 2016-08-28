@@ -20,7 +20,7 @@ class WeatherController:
         self.mainframe.change_rss_button.config(command=self.pressedChangeRss)
         self.mainframe.show_src_button.config(command=self.pressedShowSrc)
         
-        self.menuApp = wm.AppMenu(self.mainframe, self.model)
+        self.menuApp = wm.AppMenu(self.mainframe, self)
         self.root.config(menu=self.menuApp)
         
     def getMostRecentUrl(self):

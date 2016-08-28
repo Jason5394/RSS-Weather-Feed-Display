@@ -15,7 +15,7 @@ class WeatherView(tk.Frame):
         self.root = root
         self.grid(column=0, row=0, sticky=tk.N+tk.S+tk.W+tk.E)
         #self.appMenu = menu.AppMenu(self.root)
-        self.toplevels = {"changeRSS": None, "showFeed": None}
+        self.toplevels = {"changeRSS": None, "showFeed": None, "load": None, "save": None, "help": None, "about": None}
         root.title("Weather Forecast")
         root.geometry("450x280")
         root.resizable(0,0)
@@ -94,7 +94,7 @@ class WeatherView(tk.Frame):
         print("updating values")
         self.weatherdict = weatherdict
         degree_sign= u'\N{DEGREE SIGN}'
-        self.temperature.set(wp.toString(weatherdict["temperature"])+degree_sign)
+        self.temperature.set(wp.toString(weatherdict["temperature"]) + degree_sign)
         self.pressure.set(wp.toString(weatherdict["pressure"]) + " mb")
         self.humidity.set(wp.toString(weatherdict["humidity"]) + "%")
         self.conditions.set(wp.toString(weatherdict["conditions"]))
@@ -123,15 +123,43 @@ class WeatherView(tk.Frame):
                 self.conditions_img_label.image = img
             
             
+# class FormTopLevel(tk.Toplevel):
+    # def __init__(self, root, **kwargs):
+        # tk.Toplevel.__init__(self, root, **kwargs)
+        # self.root = root
+        # self.resizable(0,0)
+        # self.frame = tk.Frame(self)
+        # self.frame.grid(column=0, row=0)
+        # self.frame.columnconfigure(0, weight=1)
+        # self.frame.rowconfigure(0, weight=1)
+        
 class FormTopLevel(tk.Toplevel):
-    def __init__(self, root, **kwargs):
+
+    def __init__(self, root, title=None, resizeable=False, **kwargs):
+
         tk.Toplevel.__init__(self, root, **kwargs)
+        #self.transient(root)
         self.root = root
-        self.resizable(0,0)
-        self.frame = tk.Frame(self)
+        if title:
+            self.title(title) 
+        if resizeable:
+            self.resizeable(0,0)
+        self.focus_set()
+        self.grab_set()
+        #self.protocol("WM_DELETE_WINDOW", self.cancel)
+        self.geometry("+%d+%d" % (root.winfo_rootx()+50,
+                                  root.winfo_rooty()+50))
+                                  
+        self.frame = tk.Frame(self)   
         self.frame.grid(column=0, row=0)
         self.frame.columnconfigure(0, weight=1)
         self.frame.rowconfigure(0, weight=1)
+
+        #self.wait_window(self)
+
+    def cancel(self, event=None):
+        self.root.focus_set()
+        self.destroy()
         
             
 class ShowSourceWindow(FormTopLevel):

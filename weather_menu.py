@@ -6,10 +6,11 @@ from pubsub import pub
 
 
 class AppMenu(tk.Menu):
-    def __init__(self, master, model, **kwargs): #see if this can be changed 
-        tk.Menu.__init__(self, master, **kwargs)
+    def __init__(self, root, controller, **kwargs): #see if this can be changed 
+        tk.Menu.__init__(self, root, **kwargs)
         self.weatherdict = {}
-        self.model = model
+        self.controller = controller
+        self.root = root
         self.toplevels = {"load": None, "save": None, "help": None, "about": None}
         
         #filemenu, which has load, save and exit buttons
@@ -17,7 +18,7 @@ class AppMenu(tk.Menu):
         self.filemenu.add_command(label="Load", command=self.loadSavedUrls)
         self.filemenu.add_command(label="Save", command=self.saveUrl)
         self.filemenu.add_separator()
-        self.filemenu.add_command(label="Exit", command=self.master.quit)
+        self.filemenu.add_command(label="Exit", command=self.root.quit)
         self.add_cascade(label="File", menu=self.filemenu)
         
         #helpmenu, which has help and about buttons
@@ -49,16 +50,10 @@ class AppMenu(tk.Menu):
             pass
         
     def saveUrl(self):
-        # print("filemenu button: save")
-        # if self.initTopLevel("save", SaveWindow, self.weatherdict):
-            # print("True")
-        # else:
-            # print("False")'
-    
-        if self.toplevels["save"] is None:
+        if self.root.toplevels["save"] is None:
             print("making toplevel: save")
-            self.toplevels["save"] = SaveWindow(self, self.weatherdict)
-            self.toplevels["save"].protocol("WM_DELETE_WINDOW", lambda: self.removeTopLevel("save"))
+            self.root.toplevels["save"] = SaveWindow(self.root, self.controller)
+            self.root.toplevels["save"].protocol("WM_DELETE_WINDOW", lambda: self.removeTopLevel("save"))
         
     def showInstructions(self):
         print("helpmenu button: help")
@@ -80,16 +75,20 @@ class LoadWindow(view.FormTopLevel):
     
     
 class SaveWindow(view.FormTopLevel):
-    def __init__(self, root, weatherdict, **kwargs):
+    def __init__(self, root, controller, **kwargs):
         view.FormTopLevel.__init__(self, root, **kwargs)
         pub.subscribe(self.invalidSave, "invalidSave")
         pub.subscribe(self.validSave, "validSave")
+        #pub.subscribe(self.savingUrl, "savingUrl")
+        self.controller = controller
+        self.model = self.controller.model
+        self.weatherdict = self.model.getWeatherDict()
         self.error_toplevel = None
         self.root = root
         default_entry = ""
-        print (weatherdict)
-        if weatherdict:
-            default_entry = weatherdict["url"]
+        print (self.weatherdict)
+        if self.weatherdict:
+            default_entry = self.weatherdict["url"]
             print("url:", default_entry)
         
         self.frame.config(padx=4)
@@ -116,24 +115,29 @@ class SaveWindow(view.FormTopLevel):
         self.cancel_button.grid(column=1, row=0, sticky=tk.W+tk.E)
        
     def pressedCancel(self):
-        self.root.removeTopLevel("save")
+        self.unsubscribe()
+        self.controller.removeTopLevel("save")
         
     def pressedSave(self):
         url = self.url_entry.get()
         name = self.name_entry.get()
-        self.root.model.addSavedUrl(url, name)
+        self.model.addSavedUrl(url, name)
         
     def invalidSave(self, message):
-        #if self.error_toplevel is None:
+        #self.error_toplevel = em.ErrorMessage(self.root.toplevels["save"], message)
         self.error_toplevel = tkinter.messagebox.showerror("Error", message, parent=self.root.toplevels["save"])
-        #self.error_toplevel.protocol("WM_DELETE_WINDOW", self.removeErrorTopLevel)
-    
-    def removeErrorTopLevel(self):
-        self.error_toplevel.destroy()
-        self.error_toplevel = None
+        #self.error_toplevel = tkinter.messagebox.showerror("Error", message)
         
     def validSave(self):
-        self.root.removeTopLevel("save")
+        self.unsubscribe()
+        self.controller.removeTopLevel("save")
+        
+    def unsubscribe(self):
+        pub.unsubscribe(self.invalidSave, "invalidSave")
+        pub.unsubscribe(self.validSave, "validSave")
+        
+        
+    #def savingUrl(self):
 
         
         

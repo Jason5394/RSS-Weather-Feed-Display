@@ -23,6 +23,7 @@ class WeatherModel:
     def addSavedUrl(self, saved_url, saved_name):
         print("saved_url:", saved_url, "saved_name:", saved_name)
         if saved_name in self.saved_names:
+            print("sending invalidurl message:")
             pub.sendMessage("invalidSave", message="RSS feed name already exists.")
         elif saved_url in self.saved_urls:
             pub.sendMessage("invalidSave", message="RSS url already exists.")
@@ -32,6 +33,19 @@ class WeatherModel:
             self.saved_names.insert(0, saved_name)
             pub.sendMessage("validSave")
         
+    # def addSavedUrl(self, saved_url, saved_name):
+        # print("saved_url:", saved_url, "saved_name:", saved_name)
+        # if saved_name in self.saved_names:
+            # print("sending invalidurl message:")
+            # pub.sendMessage("savingUrl", message="RSS feed name already exists.")
+        # elif saved_url in self.saved_urls:
+            # pub.sendMessage("savingUrl", message="RSS url already exists.")
+        # else:
+            # print("validsave")
+            # self.saved_urls.insert(0, saved_url)
+            # self.saved_names.insert(0, saved_name)
+            # pub.sendMessage("savingUrl", message=None)
+            
     def getUrl(self):   
         return self.url
         
@@ -40,3 +54,10 @@ class WeatherModel:
         
     def getWeatherDict(self):
         return self.weather_dict
+        
+        
+        
+        
+        
+        
+        

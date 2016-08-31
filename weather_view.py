@@ -121,18 +121,8 @@ class WeatherView(tk.Frame):
                 img = ImageTk.PhotoImage(fp)
                 self.conditions_img_label.configure(image=img)
                 self.conditions_img_label.image = img
-            
-            
-# class FormTopLevel(tk.Toplevel):
-    # def __init__(self, root, **kwargs):
-        # tk.Toplevel.__init__(self, root, **kwargs)
-        # self.root = root
-        # self.resizable(0,0)
-        # self.frame = tk.Frame(self)
-        # self.frame.grid(column=0, row=0)
-        # self.frame.columnconfigure(0, weight=1)
-        # self.frame.rowconfigure(0, weight=1)
-        
+ 
+ 
 class FormTopLevel(tk.Toplevel):
 
     def __init__(self, root, title=None, resizeable=False, **kwargs):
@@ -146,7 +136,7 @@ class FormTopLevel(tk.Toplevel):
             self.resizeable(0,0)
         self.focus_set()
         self.grab_set()
-        #self.protocol("WM_DELETE_WINDOW", self.cancel)
+        self.protocol("WM_DELETE_WINDOW", self.removeTopLevel)
         self.geometry("+%d+%d" % (root.winfo_rootx()+50,
                                   root.winfo_rooty()+50))
                                   
@@ -157,9 +147,10 @@ class FormTopLevel(tk.Toplevel):
 
         #self.wait_window(self)
 
-    def cancel(self, event=None):
+    def removeTopLevel(self, event=None):
         self.root.focus_set()
         self.destroy()
+        self = None
         
             
 class ShowSourceWindow(FormTopLevel):
@@ -182,13 +173,7 @@ class ChangeRSSWindow(FormTopLevel):
         self.rss_entry.grid(column=0, row=1)
         self.submit_rss_button = tk.Button(self.frame, text="Submit")
         self.submit_rss_button.grid(column=1, row=1)
-        
-        #allow labels to resize along with resizing windows
-        # for x in range(2):
-            # self.grid_rowconfigure(x, weight=1)
-        # for y in range(2):
-            # self.grid_columnconfigure(y, weight=1)
-            
+      
         
 def main():
     root = tk.Tk()

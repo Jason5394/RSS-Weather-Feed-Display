@@ -59,7 +59,7 @@ class WeatherController:
         #if okay, exit out of window and save new url otherwise show warning message
         rss = self.mainframe.toplevels["changeRSS"].rss_entry.get()
         print("RSS feed:", rss)
-        if wp.WeatherData.isValidRSS(rss) is True:
+        if wp.WeatherData.isValidRSS(rss):
             self.model.setWeather(rss)
             self.removeTopLevel("changeRSS")
         else:

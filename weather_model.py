@@ -33,9 +33,10 @@ class WeatherModel:
             with open("saved_feeds.pickle", "rb") as handle:
                 try:
                     dict = pickle.load(handle)
+                    print("dict:",dict)
                     self.saved_urls = dict["savedUrls"]
                     self.saved_names = dict["savedNames"]
-                    if wp.isValidRSS(dict["recentUrl"]): 
+                    if wp.WeatherData.isValidRSS(dict["recentUrl"]): 
                         self.setWeather(dict["recentUrl"])
                     else:
                         self.url = None
@@ -90,6 +91,12 @@ class WeatherModel:
         
     def getWeatherDict(self):
         return self.weather_dict
+        
+    def getSavedUrls(self):
+        return self.saved_urls
+        
+    def getSavedNames(self):
+        return self.saved_names
         
         
         

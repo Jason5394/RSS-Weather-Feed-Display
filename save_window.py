@@ -42,7 +42,7 @@ class SaveWindow(view.FormTopLevel):
        
     def pressedCancel(self):
         self.unsubscribe()
-        self.removeTopLevel()
+        self.root.removeTopLevel("save")
         
     def pressedSave(self):
         url = self.url_entry.get()
@@ -54,7 +54,7 @@ class SaveWindow(view.FormTopLevel):
         
     def validSave(self):
         self.unsubscribe()
-        self.removeTopLevel()
+        self.root.removeTopLevel("save")
         
     def unsubscribe(self):
         pub.unsubscribe(self.invalidSave, "invalidSave")

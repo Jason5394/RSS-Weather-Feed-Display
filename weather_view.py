@@ -15,7 +15,7 @@ class WeatherView(tk.Frame):
         self.root = root
         self.grid(column=0, row=0, sticky=tk.N+tk.S+tk.W+tk.E)
         #self.appMenu = menu.AppMenu(self.root)
-        self.toplevels = {"changeRSS": None, "showFeed": None, "load": None, "save": None, "help": None, "about": None}
+        self.toplevels = {"changeRSS": None, "showFeed": None}
         root.title("Weather Forecast")
         root.geometry("450x280")
         root.resizable(0,0)

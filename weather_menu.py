@@ -3,6 +3,7 @@ import tkinter.messagebox
 import weather_view as view
 import error_message as em
 from save_window import *
+from load_window import *
 from pubsub import pub
 
 
@@ -47,13 +48,12 @@ class AppMenu(tk.Menu):
         return False
         
     def loadSavedUrls(self):
-        print("filemenu button: load")
-        if self.initTopLevel("load", LoadWindow):
-            pass
+        if self.toplevels["load"] is None:
+            self.toplevels["load"] = LoadWindow(self)
+            self.toplevels["load"].protocol("WM_DELETE_WINDOW", lambda: self.removeTopLevel("load"))
         
     def saveUrl(self):
-        if self.root.toplevels["save"] is None:
-            print("making toplevel: save")
+        if self.toplevels["save"] is None:
             self.toplevels["save"] = SaveWindow(self)
             self.toplevels["save"].protocol("WM_DELETE_WINDOW", lambda: self.removeTopLevel("save"))
         
@@ -70,11 +70,6 @@ class AppMenu(tk.Menu):
 class InstructionsWindow(view.FormTopLevel):
     def __init__():
         pass
-
-   
-class LoadWindow(view.FormTopLevel):
-    pass
-    
 
 class AboutWindow(view.FormTopLevel):
     pass

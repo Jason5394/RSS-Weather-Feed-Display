@@ -38,15 +38,7 @@ class AppMenu(tk.Menu):
         '''function called when window that changes rss feed is destroyed.'''
         self.toplevels[key].destroy()
         self.toplevels[key] = None 
-        
-    def initTopLevel(self, key, Class, *args):
-        if self.toplevels[key] is None:
-            print("making toplevel:", Class)
-            self.toplevels[key] = Class(self, *args)
-            self.toplevels[key].protocol("WM_DELETE_WINDOW", lambda: self.removeTopLevel(key))
-            return True
-        return False
-        
+                
     def loadSavedUrls(self):
         if self.toplevels["load"] is None:
             self.toplevels["load"] = LoadWindow(self)

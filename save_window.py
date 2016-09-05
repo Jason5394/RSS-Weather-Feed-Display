@@ -12,11 +12,10 @@ class SaveWindow(view.FormTopLevel):
         self.error_toplevel = None
         self.root = root
         default_entry = ""
-        print (self.weatherdict)
         if self.weatherdict:
-            default_entry = self.weatherdict["url"]
-            print("url:", default_entry)
-        
+            if self.weatherdict["url"]:
+                default_entry = self.weatherdict["url"]
+
         self.frame.config(padx=4)
         
         #construct second frame

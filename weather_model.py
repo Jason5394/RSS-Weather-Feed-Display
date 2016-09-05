@@ -49,7 +49,8 @@ class WeatherModel:
                     print("Problem unpickling saved data.  Program will wipe corrupt data.")
                     #TODO: implement wiping of persistent data on file
                     self.__clear()  #clears local data
-                    #TODO: Send message to notify user of data corruption.
+                    emptydict = {"savedNames" : None, "savedUrls" : None, "recentUrl" : None}
+                    self.__saveToFile()
         except FileNotFoundError:
             print("FileNotFoundError caught")
             self.__clear()

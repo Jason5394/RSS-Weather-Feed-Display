@@ -49,7 +49,8 @@ class WeatherModel:
                     print("Problem unpickling saved data.  Program will wipe corrupt data.")
                     #TODO: implement wiping of persistent data on file
                     self.__clear()  #clears local data
-                    #TODO: Send message to notify user of data corruption.
+                    pub.sendMessage("corruptData", message="Saved data was corrupted and will now be erased.")
+                    self.__saveToFile()
         except FileNotFoundError:
             print("FileNotFoundError caught")
             self.__clear()
@@ -84,6 +85,8 @@ class WeatherModel:
             pub.sendMessage("invalidSave", message="RSS feed name already exists.")
         elif saved_url in self.saved_urls:
             pub.sendMessage("invalidSave", message="RSS url already exists.")
+        elif not wp.WeatherData.isValidRSS(saved_url):
+            pub.sendMessage("invalidSave", message="RSS url is invalid.")
         else:
             print("validsave")
             self.saved_urls.insert(0, saved_url)

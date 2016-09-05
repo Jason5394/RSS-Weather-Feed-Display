@@ -12,6 +12,7 @@ class WeatherController:
     '''
     def __init__(self, root):
         self.root = root
+        pub.subscribe(self.corruptData, "corruptData")
         self.model = model.WeatherModel()
         url = self.getMostRecentUrl()
         self.mainframe = view.WeatherView(root)
@@ -23,7 +24,6 @@ class WeatherController:
         self.root.config(menu=self.menuApp)
         
         pub.subscribe(self.valuesChanged, "valuesChanged")
-        
         self.model.setWeather(url)
         
     def getMostRecentUrl(self):
@@ -76,7 +76,9 @@ class WeatherController:
                 self.mainframe.toplevels["showFeed"] = view.ShowSourceWindow(self.mainframe, weatherdict["rss_feed"])
                 self.mainframe.toplevels["showFeed"].protocol("WM_DELETE_WINDOW", lambda: self.removeTopLevel("showFeed"))
             
-        
+    def corruptData(self, message):
+        self.error_toplevel = tkinter.messagebox.showerror("Error", message, parent=self.mainframe)
+      
 def main():
     root = tk.Tk()
     root.columnconfigure(0, weight=1)

@@ -21,7 +21,7 @@ class WeatherView(tk.Frame):
         root.resizable(0,0)
         #root.config(menu=self.appMenu)
         self.refresh_button = tk.Button(self, text="Update")
-        self.change_rss_button = tk.Button(self, text="Change RSS feed")
+        self.change_rss_button = tk.Button(self, text="Change feed")
         self.show_src_button = tk.Button(self, text="Show source")
         
         self.conditions_img = None
@@ -125,15 +125,15 @@ class WeatherView(tk.Frame):
  
 class FormTopLevel(tk.Toplevel):
 
-    def __init__(self, root, title=None, resizeable=False, **kwargs):
+    def __init__(self, root, title=None, resizable=False, **kwargs):
 
         tk.Toplevel.__init__(self, root, **kwargs)
         #self.transient(root)
         self.root = root
         if title:
             self.title(title) 
-        if resizeable:
-            self.resizeable(0,0)
+        if not resizable:
+            self.resizable(0,0)
         self.focus_set()
         self.grab_set()
         self.protocol("WM_DELETE_WINDOW", self.removeTopLevel)

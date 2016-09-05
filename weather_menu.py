@@ -40,31 +40,57 @@ class AppMenu(tk.Menu):
         self.toplevels[key] = None 
                 
     def loadSavedUrls(self):
-        if self.toplevels["load"] is None:
+        if not self.toplevels["load"]:
             self.toplevels["load"] = LoadWindow(self)
             self.toplevels["load"].protocol("WM_DELETE_WINDOW", lambda: self.removeTopLevel("load"))
         
     def saveUrl(self):
-        if self.toplevels["save"] is None:
+        if not self.toplevels["save"]:
             self.toplevels["save"] = SaveWindow(self)
             self.toplevels["save"].protocol("WM_DELETE_WINDOW", lambda: self.removeTopLevel("save"))
         
     def showInstructions(self):
-        print("helpmenu button: help")
-        if self.initTopLevel("help", InstructionsWindow):
-            pass
-            
+        if not self.toplevels["help"]:
+            self.toplevels["help"] = InstructionsWindow(self)
+            self.toplevels["help"].protocol("WM_DELETE_WINDOW", lambda: self.removeTopLevel("help"))
+                
     def showAbout(self):
-        print("helpmenu button: about")
-        if self.initTopLevel("about", AboutWindow):
-            pass
+        if not self.toplevels["about"]:
+            self.toplevels["about"] = AboutWindow(self)
+            self.toplevels["about"].protocol("WM_DELETE_WINDOW", lambda: self.removeTopLevel("about"))
         
 class InstructionsWindow(view.FormTopLevel):
-    def __init__():
-        pass
+    def __init__(self, root, **kwargs):
+        view.FormTopLevel.__init__(self, root, **kwargs)
+        
+        instructions = ("This weather app only serves the NOAA's National Weather Service "
+        "RSS feed.  To choose a weather feed, go to http://w1.weather.gov/xml/current_obs/seek.php "
+        "and copy the url.  Click on the \"Change feed\" button and enter the url.  The "
+        "correct weather information should populate. \n\n"
+            
+        "By pressing on the \"Show source\" button, you can view your RSS feed in its raw "
+        "form.  Pressing \"Update\" attempts to retrieve updates from the current feed and displays "
+        "the newly changed results on the screen. \n\n"
+            
+        "You can also save feeds by clicking on the File menu and then Save.  Load the saved "
+        "feed by pressing \"Load\" and choosing from your saved feeds.")
+        
+        instruct_msg = tk.Message(self.frame, text=instructions, padx=10, pady=10, 
+                                    justify=tk.LEFT, width=400)
+        instruct_msg.grid(column=0, row=0)
 
 class AboutWindow(view.FormTopLevel):
-    pass
+    def __init__(self, root, **kwargs):
+        view.FormTopLevel.__init__(self, root, **kwargs)
+        
+        about = ("This app was created by Jason Yang, 2016. The National Oceanic and "
+            "Atmospheric Administrations' National Weather Service was the main resource used to pull " 
+            "weather information as RSS feeds. All weather parsing and weather data types closely " 
+            "model that of the aforementioned feed.")
+        
+        about_msg = tk.Message(self.frame, text=about, justify = tk.LEFT,
+                                width=400, padx=10, pady=10)
+        about_msg.grid(column=0, row=0)
     
     
 def main():

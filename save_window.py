@@ -22,7 +22,7 @@ class SaveWindow(view.FormTopLevel):
         #construct second frame
         self.frame2 = tk.Frame(self, padx=2, pady=2)
         self.frame2.grid(column=0, row=1)
-        
+
         self.instruct_label = tk.Label(self.frame, text="Save an RSS feed")
         self.name_label = tk.Label(self.frame, text="RSS name:")
         self.url_label = tk.Label(self.frame, text="RSS feed URL:")
@@ -37,8 +37,8 @@ class SaveWindow(view.FormTopLevel):
         self.name_entry.grid(column=1, row=1)
         self.url_label.grid(column=0, row=2, sticky=tk.E)
         self.url_entry.grid(column=1, row=2)
-        self.submit_button.grid(column=0, row=0, sticky=tk.W+tk.E)
-        self.cancel_button.grid(column=1, row=0, sticky=tk.W+tk.E)
+        self.submit_button.grid(column=0, row=0)
+        self.cancel_button.grid(column=1, row=0)
        
     def pressedCancel(self):
         self.unsubscribe()

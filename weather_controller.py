@@ -11,10 +11,9 @@ class WeatherController:
     Controller in the MVC for the application.
     '''
     def __init__(self, root):
-        url = self.getMostRecentUrl()
         self.root = root
         self.model = model.WeatherModel()
-        pub.subscribe(self.valuesChanged, "valuesChanged")
+        url = self.getMostRecentUrl()
         self.mainframe = view.WeatherView(root)
         self.mainframe.refresh_button.config(command=self.pressedUpdate)
         self.mainframe.change_rss_button.config(command=self.pressedChangeRss)
@@ -23,9 +22,13 @@ class WeatherController:
         self.menuApp = wm.AppMenu(self.mainframe, self)
         self.root.config(menu=self.menuApp)
         
+        pub.subscribe(self.valuesChanged, "valuesChanged")
+        
+        self.model.setWeather(url)
+        
     def getMostRecentUrl(self):
-        #retrieves most recently used url from a file somewhere 
-        return None
+        '''retrieves most recently used url from the pickle file '''
+        return self.model.getUrl()
     
     def valuesChanged(self, weather_dict):
         '''Listener that changes the weather data in the application'''

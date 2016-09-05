@@ -63,8 +63,16 @@ class WeatherModel:
         self.saved_urls = []
         self.saved_names = []
         
+    def setSavedLists(self, names, urls):
+        #update local lists
+        self.saved_urls = urls
+        self.saved_names = names
+        #save to pickle file
+        self.__saveToFile()
+        
     def setWeather(self, url):
         self.url = url
+        self.__saveToFile()
         self.weatherObj = wp.WeatherData(self.url)
         self.weather_dict = self.weatherObj.__dict__ #dictionary that contains all weatherObj attributes
         pub.sendMessage("valuesChanged", weather_dict=self.weather_dict)

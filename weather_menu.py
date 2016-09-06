@@ -1,7 +1,6 @@
 import tkinter as tk
 import tkinter.messagebox
 import weather_view as view
-import error_message as em
 from save_window import *
 from load_window import *
 from pubsub import pub

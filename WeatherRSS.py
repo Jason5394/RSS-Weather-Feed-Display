@@ -1,2 +1,4 @@
-#this file only exists to make the executable have a cleaner name
+#this file only exists to change the executable name
 import weather_controller
+
+weather_controller.main()

@@ -12,8 +12,6 @@ class WeatherModel:
         self.url = None   
         self.saved_urls = []
         self.saved_names = []
-        self.saved_urls.append("http://w1.weather.gov/xml/current_obs/NSTU.rss")
-        self.saved_names.append("test")
         self.__loadFromFile()
         print("saved_urls: ", self.saved_urls)
         print("saved_names: ", self.saved_names)

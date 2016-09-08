@@ -10,94 +10,114 @@ class WeatherView(tk.Frame):
     '''
     Main window in the MVC of the application.  Displays the parsed information onto the screen
     '''
-    def __init__(self, root, weatherdict=None, *args, **kwargs):
+    def __init__(self, root, *args, **kwargs):
         tk.Frame.__init__(self, root, *args, **kwargs)
         self.root = root
-        self.grid(column=0, row=0, sticky=tk.N+tk.S+tk.W+tk.E)
-        #self.appMenu = menu.AppMenu(self.root)
+        self.grid(column=0, row=0, sticky="nsew")
         self.toplevels = {"changeRSS": None, "showFeed": None}
+        self.conditions_img = None
         root.title("Weather Forecast")
         root.geometry("450x280")
         root.resizable(0,0)
-        #root.config(menu=self.appMenu)
-        self.refresh_button = tk.Button(self, text="Update")
-        self.change_rss_button = tk.Button(self, text="Change feed")
-        self.show_src_button = tk.Button(self, text="Show source")
-        
-        self.conditions_img = None
+        #create subframes inside main frame
+        self.topframe = tk.Frame(self, height=40)
+        self.midframe = tk.Frame(self, height=100)
+        self.botframe = tk.Frame(self, height=140)
+        self.topframe.grid(column=0, row=0)
+        self.midframe.grid(column=0, row=1, sticky="ns")
+        self.botframe.grid(column=0, row=2, sticky="nsew")
         
         #declare each data member as a StringVar
         self.temperature = tk.StringVar()
         self.wind = tk.StringVar()
-        #self.wind_direction = tk.StringVar()
         self.last_updated = tk.StringVar()
         self.heat_index = tk.StringVar()
         self.location = tk.StringVar()
         self.pressure = tk.StringVar()
         self.humidity = tk.StringVar()
         self.conditions = tk.StringVar()
-        
-        #if user supplied weather object, set that and update values in the respective StringVars
-        if weatherdict is not None:
-            self.weatherdict = weatherdict
-            self.setValues(self.weatherdict)
-        else:
-            self.weatherdict = {}
+         
+        #creating buttons 
+        self.refresh_button = tk.Button(self.topframe, text="Update", width=12)
+        self.change_rss_button = tk.Button(self.topframe, text="Change feed", width=12)
+        self.show_src_button = tk.Button(self.topframe, text="Show source", width=12)    
             
         #create a label for each data member
-        self.title_label = tk.Label(self, text="Weather Forecast", font="bold")
-        self.location_label = tk.Label(self, textvariable=self.location)
-        self.wind_label = tk.Label(self, textvariable=self.wind)
-        self.heat_index_label = tk.Label(self, textvariable=self.heat_index)
-        self.temperature_label = tk.Label(self, textvariable=self.temperature, font="Calibri, 24")  
-        self.conditions_label = tk.Label(self, textvariable=self.conditions, font="Calibri, 18")        
-        self.pressure_label = tk.Label(self, textvariable=self.pressure)       
-        self.humidity_label = tk.Label(self, textvariable=self.humidity)      
-        self.last_updated_label = tk.Label(self, textvariable=self.last_updated)
-        self.conditions_img_label = tk.Label(self, image=self.conditions_img)
+        self.title_label = tk.Label(self.topframe, text="Weather Forecast", font="bold")
+        
+        self.temperature_label = tk.Label(self.midframe, textvariable=self.temperature,
+                                            padx=10, font="Calibri, 24") 
+        self.conditions_img_label = tk.Label(self.midframe, image=self.conditions_img)               
+        self.conditions_label = tk.Label(self.midframe, textvariable=self.conditions,
+                                            padx=10, font="Calibri, 18")    
+        
+        self.pressure_label = tk.Label(self.botframe, textvariable=self.pressure)     
+        self.humidity_label = tk.Label(self.botframe, textvariable=self.humidity)      
+        self.wind_label = tk.Label(self.botframe, textvariable=self.wind)
+        self.heat_index_label = tk.Label(self.botframe, textvariable=self.heat_index) 
+        self.last_updated_label = tk.Label(self.botframe, textvariable=self.last_updated)
+        self.location_label = tk.Label(self.botframe, textvariable=self.location)
         #static labels that don't change
-        self.location_static_label = tk.Label(self, text="Location: ")
-        self.heat_static_label = tk.Label(self, text="Heat index: ")
-        self.pressure_static_label = tk.Label(self, text="Pressure: ")
-        self.humidity_static_label = tk.Label(self, text="Humidity: ")
-        self.updated_static_label = tk.Label(self, text="Last Updated: ")
-        self.wind_static_label = tk.Label(self, text="Wind conditions: ")
+        self.pressure_static_label = tk.Label(self.botframe, text="Pressure: ")
+        self.humidity_static_label = tk.Label(self.botframe, text="Humidity: ")
+        self.wind_static_label = tk.Label(self.botframe, text="Wind conditions: ")
+        self.heat_static_label = tk.Label(self.botframe, text="Heat index: ") 
+        self.location_static_label = tk.Label(self.botframe, text="Location: ")
+        self.updated_static_label = tk.Label(self.botframe, text="Last updated: ")
+          
+        #set grid placements of the widgets
         
-        #set grid placements of the labels
+        #top frame widgets
         self.title_label.grid(column=0, row=0, columnspan=3)
-        self.refresh_button.grid(column=0, row=1, sticky=tk.E)
+        self.refresh_button.grid(column=0, row=1)
         self.change_rss_button.grid(column=1, row=1)
-        self.show_src_button.grid(column=2, row=1, sticky=tk.W)
-        self.conditions_label.grid(column=0, row=2, sticky=tk.E)
-        self.conditions_img_label.grid(column=1, row=2)
-        self.temperature_label.grid(column=2, row=2, sticky=tk.W)
-        self.pressure_static_label.grid(column=0, row=3, sticky=tk.E)
-        self.pressure_label.grid(column=1, row=3, columnspan=2, sticky=tk.W)
-        self.humidity_static_label.grid(column=0, row=4, sticky=tk.E)
-        self.humidity_label.grid(column=1, row=4, columnspan=2, sticky=tk.W)
-        self.wind_static_label.grid(column=0, row=5, sticky=tk.E)
-        self.wind_label.grid(column=1, row=5, columnspan=2, sticky=tk.W)
-        self.heat_static_label.grid(column=0, row=6, sticky=tk.E)
-        self.heat_index_label.grid(column=1, row=6, columnspan=2, sticky=tk.W)
-        self.updated_static_label.grid(column=0, row=7, sticky=tk.E)
-        self.last_updated_label.grid(column=1, row=7, columnspan=2, sticky=tk.W)
-        self.location_static_label.grid(column=0, row=8, sticky=tk.E)
-        self.location_label.grid(column=1, row=8, columnspan=2, sticky=tk.W)
-        
-        #allow labels to resize along with resizing windows
-        for x in range(9):
-            self.grid_rowconfigure(x, weight=1)
-        for y in range(3):
-            self.grid_columnconfigure(y, weight=1)
-        
+        self.show_src_button.grid(column=2, row=1)
+        #mid frame widgets
+        self.conditions_label.grid(column=0, row=0)
+        self.conditions_img_label.grid(column=1, row=0)
+        self.temperature_label.grid(column=2, row=0)
+        #bot frame widgets
+        self.pressure_static_label.grid(column=0, row=0, sticky="e", padx=4)
+        self.pressure_label.grid(column=1, row=0, sticky="w")
+        self.humidity_static_label.grid(column=0, row=1, sticky="e", padx=4)
+        self.humidity_label.grid(column=1, row=1, sticky="w")
+        self.wind_static_label.grid(column=0, row=2, sticky="e", padx=4)
+        self.wind_label.grid(column=1, row=2, sticky="w")
+        self.heat_static_label.grid(column=0, row=3, sticky="e", padx=4)
+        self.heat_index_label.grid(column=1, row=3, sticky="w")
+        self.updated_static_label.grid(column=0, row=4, sticky="e", padx=4)
+        self.last_updated_label.grid(column=1, row=4, sticky="w")
+        self.location_static_label.grid(column=0, row=5, sticky="e", padx=4)
+        self.location_label.grid(column=1, row=5, sticky="w")
+
+        self.grid_columnconfigure(0, weight=1)
+        self.grid_rowconfigure(0, weight=1)
+        self.grid_rowconfigure(1, weight=1)
+        self.grid_rowconfigure(2, weight=2)
+        self.topframe.grid_columnconfigure(0, weight=1)
+        self.topframe.grid_columnconfigure(1, weight=1)
+        self.topframe.grid_columnconfigure(2, weight=1)
+        self.topframe.grid_rowconfigure(0, weight=1)
+        self.midframe.grid_columnconfigure(0, weight=0)
+        self.midframe.grid_columnconfigure(1, weight=1)
+        self.midframe.grid_columnconfigure(2, weight=0)
+        self.midframe.grid_rowconfigure(0, weight=1)
+        self.botframe.grid_columnconfigure(0, weight=1)
+        self.botframe.grid_columnconfigure(1, weight=3)
+        for row in range(6):
+            self.botframe.grid_rowconfigure(row, weight=1)
+            
     def setValues(self, weatherdict):
         print("updating values")
         self.weatherdict = weatherdict
         degree_sign= u'\N{DEGREE SIGN}'
-        self.temperature.set(wp.toString(weatherdict["temperature"]) + degree_sign)
+        
+        if weatherdict["temperature"]:
+            self.temperature.set(weatherdict["temperature"] + degree_sign)
+        if weatherdict["conditions"]:
+            self.conditions.set(weatherdict["conditions"])
         self.pressure.set(wp.toString(weatherdict["pressure"]) + " mb")
-        self.humidity.set(wp.toString(weatherdict["humidity"]) + "%")
-        self.conditions.set(wp.toString(weatherdict["conditions"]))
+        self.humidity.set(wp.toString(weatherdict["humidity"]) + "%")     
         self.last_updated.set(wp.toString(weatherdict["last_updated"]))
         self.heat_index.set(wp.toString(weatherdict["heat_index"]))
         self.location.set(wp.toString(weatherdict["location"]))
@@ -145,8 +165,6 @@ class FormTopLevel(tk.Toplevel):
         self.frame.columnconfigure(0, weight=1)
         self.frame.rowconfigure(0, weight=1)
 
-        #self.wait_window(self)
-
     def removeTopLevel(self, event=None):
         self.root.focus_set()
         self.destroy()
@@ -179,8 +197,7 @@ def main():
     root = tk.Tk()
     root.columnconfigure(0, weight=1)
     root.rowconfigure(0, weight=1)
-    testObj = wp.WeatherData("http://w1.weather.gov/xml/current_obs/KEWR.rss")
-    display = WeatherView(root, testObj).grid(column=0, row=0, sticky=tk.N+tk.S+tk.W+tk.E)
+    display = WeatherView(root)
        
     #display.weatherData.display()
     root.mainloop()

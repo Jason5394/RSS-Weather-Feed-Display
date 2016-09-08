@@ -1,0 +1,8 @@
+Still to do:
+
+- Add (multithreaded?) timer that periodically updates feed
+
+Known bugs:
+
+- In change feed, URL is not properly saved (only saved for the first time it is pressed)
+- Show source window pops up even when there is no currently selected feed

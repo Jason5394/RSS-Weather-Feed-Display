@@ -1,9 +1,11 @@
 import weather_view as view
 from pubsub import pub
 import tkinter as tk
+import tkinter.ttk as ttk
 import tkinter.messagebox
 
 class SaveWindow(view.FormTopLevel):
+    '''Window that appears when user chooses "Save" in menu dropdown.'''
     def __init__(self, root, **kwargs):
         view.FormTopLevel.__init__(self, root, **kwargs)
         pub.subscribe(self.invalidSave, "invalidSave")
@@ -15,22 +17,22 @@ class SaveWindow(view.FormTopLevel):
         if self.weatherdict:
             if self.weatherdict["url"]:
                 default_entry = self.weatherdict["url"]
-
-        self.frame.config(padx=4)
         
-        #construct second frame
-        self.frame2 = tk.Frame(self, padx=2, pady=2)
+        #construct inner frames
+        self.frame1 = ttk.Frame(self)
+        self.frame1.grid(column=0, row=0)
+        self.frame2 = ttk.Frame(self)
         self.frame2.grid(column=0, row=1)
-
-        self.instruct_label = tk.Label(self.frame, text="Save an RSS feed")
-        self.name_label = tk.Label(self.frame, text="RSS name:")
-        self.url_label = tk.Label(self.frame, text="RSS feed URL:")
-        self.submit_button = tk.Button(self.frame2, text="Save", width=10, command=self.pressedSave)
-        self.cancel_button = tk.Button(self.frame2, text="Cancel", width=10, command=self.pressedCancel)
-        self.url_entry = tk.Entry(self.frame, width=50)
+        #create widgets
+        self.instruct_label = ttk.Label(self.frame1, text="Save an RSS feed")
+        self.name_label = ttk.Label(self.frame1, text="RSS name:")
+        self.url_label = ttk.Label(self.frame1, text="RSS feed URL:")
+        self.url_entry = ttk.Entry(self.frame1, width=50)
         self.url_entry.insert(0, default_entry)
-        self.name_entry = tk.Entry(self.frame, width=50)
-        
+        self.name_entry = ttk.Entry(self.frame1, width=50)
+        self.submit_button = ttk.Button(self.frame2, text="Save", width=10, command=self.pressedSave)
+        self.cancel_button = ttk.Button(self.frame2, text="Cancel", width=10, command=self.pressedCancel)
+        #place widgets
         self.instruct_label.grid(column=0, row=0, columnspan=2)
         self.name_label.grid(column=0, row=1, sticky=tk.E)
         self.name_entry.grid(column=1, row=1)

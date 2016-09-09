@@ -72,7 +72,7 @@ class WeatherController:
     def pressedShowSrc(self):
         if self.mainframe.toplevels["showFeed"] is None:
             weatherdict = self.model.getWeatherDict()
-            if weatherdict is not None:
+            if weatherdict["rss_feed"]:
                 self.mainframe.toplevels["showFeed"] = view.ShowSourceWindow(self.mainframe, weatherdict["rss_feed"])
                 self.mainframe.toplevels["showFeed"].protocol("WM_DELETE_WINDOW", lambda: self.removeTopLevel("showFeed"))
             

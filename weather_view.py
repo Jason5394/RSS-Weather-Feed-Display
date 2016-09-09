@@ -6,12 +6,12 @@ from PIL import Image, ImageTk
 from tkinter import ttk
 import weather_menu as wm
 
-class WeatherView(tk.Frame):
+class WeatherView(ttk.Frame):
     '''
     Main window in the MVC of the application.  Displays the parsed information onto the screen
     '''
     def __init__(self, root, *args, **kwargs):
-        tk.Frame.__init__(self, root, *args, **kwargs)
+        ttk.Frame.__init__(self, root, *args, **kwargs)
         self.root = root
         self.grid(column=0, row=0, sticky="nsew")
         self.toplevels = {"changeRSS": None, "showFeed": None}
@@ -20,9 +20,9 @@ class WeatherView(tk.Frame):
         root.geometry("450x280")
         root.resizable(0,0)
         #create subframes inside main frame
-        self.topframe = tk.Frame(self, height=40)
-        self.midframe = tk.Frame(self, height=100)
-        self.botframe = tk.Frame(self, height=140)
+        self.topframe = ttk.Frame(self, height=40)
+        self.midframe = ttk.Frame(self, height=100)
+        self.botframe = ttk.Frame(self, height=140)
         self.topframe.grid(column=0, row=0)
         self.midframe.grid(column=0, row=1, sticky="ns")
         self.botframe.grid(column=0, row=2, sticky="nsew")
@@ -38,32 +38,32 @@ class WeatherView(tk.Frame):
         self.conditions = tk.StringVar()
          
         #creating buttons 
-        self.refresh_button = tk.Button(self.topframe, text="Update", width=12)
-        self.change_rss_button = tk.Button(self.topframe, text="Change feed", width=12)
-        self.show_src_button = tk.Button(self.topframe, text="Show source", width=12)    
+        self.refresh_button = ttk.Button(self.topframe, text="Update", width=12)
+        self.change_rss_button = ttk.Button(self.topframe, text="Change feed", width=12)
+        self.show_src_button = ttk.Button(self.topframe, text="Show source", width=12)    
             
         #create a label for each data member
-        self.title_label = tk.Label(self.topframe, text="Weather Forecast", font="bold")
+        self.title_label = ttk.Label(self.topframe, text="Weather Forecast", font="bold")
         
-        self.temperature_label = tk.Label(self.midframe, textvariable=self.temperature,
-                                            padx=10, font="Calibri, 24") 
-        self.conditions_img_label = tk.Label(self.midframe, image=self.conditions_img)               
-        self.conditions_label = tk.Label(self.midframe, textvariable=self.conditions,
-                                            padx=10, font="Calibri, 18")    
+        self.temperature_label = ttk.Label(self.midframe, textvariable=self.temperature,
+                                            padding=5, font="Calibri, 24") 
+        self.conditions_img_label = ttk.Label(self.midframe, image=self.conditions_img)               
+        self.conditions_label = ttk.Label(self.midframe, textvariable=self.conditions,
+                                            padding=5, font="Calibri, 18")    
         
-        self.pressure_label = tk.Label(self.botframe, textvariable=self.pressure)     
-        self.humidity_label = tk.Label(self.botframe, textvariable=self.humidity)      
-        self.wind_label = tk.Label(self.botframe, textvariable=self.wind)
-        self.heat_index_label = tk.Label(self.botframe, textvariable=self.heat_index) 
-        self.last_updated_label = tk.Label(self.botframe, textvariable=self.last_updated)
-        self.location_label = tk.Label(self.botframe, textvariable=self.location)
+        self.pressure_label = ttk.Label(self.botframe, textvariable=self.pressure)     
+        self.humidity_label = ttk.Label(self.botframe, textvariable=self.humidity)      
+        self.wind_label = ttk.Label(self.botframe, textvariable=self.wind)
+        self.heat_index_label = ttk.Label(self.botframe, textvariable=self.heat_index) 
+        self.last_updated_label = ttk.Label(self.botframe, textvariable=self.last_updated)
+        self.location_label = ttk.Label(self.botframe, textvariable=self.location)
         #static labels that don't change
-        self.pressure_static_label = tk.Label(self.botframe, text="Pressure: ")
-        self.humidity_static_label = tk.Label(self.botframe, text="Humidity: ")
-        self.wind_static_label = tk.Label(self.botframe, text="Wind conditions: ")
-        self.heat_static_label = tk.Label(self.botframe, text="Heat index: ") 
-        self.location_static_label = tk.Label(self.botframe, text="Location: ")
-        self.updated_static_label = tk.Label(self.botframe, text="Last updated: ")
+        self.pressure_static_label = ttk.Label(self.botframe, text="Pressure: ")
+        self.humidity_static_label = ttk.Label(self.botframe, text="Humidity: ")
+        self.wind_static_label = ttk.Label(self.botframe, text="Wind conditions: ")
+        self.heat_static_label = ttk.Label(self.botframe, text="Heat index: ") 
+        self.location_static_label = ttk.Label(self.botframe, text="Location: ")
+        self.updated_static_label = ttk.Label(self.botframe, text="Last updated: ")
           
         #set grid placements of the widgets
         
@@ -140,7 +140,10 @@ class WeatherView(tk.Frame):
             with Image.open(io.BytesIO(r.content)) as fp:
                 img = ImageTk.PhotoImage(fp)
                 self.conditions_img_label.configure(image=img)
-                self.conditions_img_label.image = img
+                self.conditions_img_label.image = img      
+        else:
+            self.conditions_img_label.configure(image=None)
+            self.conditions_img_label.image = None
  
  
 class FormTopLevel(tk.Toplevel):
@@ -160,7 +163,7 @@ class FormTopLevel(tk.Toplevel):
         self.geometry("+%d+%d" % (root.winfo_rootx()+50,
                                   root.winfo_rooty()+50))
                                   
-        self.frame = tk.Frame(self)   
+        self.frame = ttk.Frame(self)   
         self.frame.grid(column=0, row=0)
         self.frame.columnconfigure(0, weight=1)
         self.frame.rowconfigure(0, weight=1)
@@ -176,8 +179,8 @@ class ShowSourceWindow(FormTopLevel):
         FormTopLevel.__init__(self, root, **kwargs)
         
         self.rss_src = src
-        tk.Label(self.frame, text="RSS Source", font="bold").grid(column=0, row=0)
-        rss_src_label = tk.Label(self.frame, text=self.rss_src)
+        ttk.Label(self.frame, text="RSS Source", font="bold").grid(column=0, row=0)
+        rss_src_label = ttk.Label(self.frame, text=self.rss_src)
         rss_src_label.grid(column=0, row=1)
   
   
@@ -186,10 +189,10 @@ class ChangeRSSWindow(FormTopLevel):
     def __init__(self, root, **kwargs):
         FormTopLevel.__init__(self,root, **kwargs)
         
-        tk.Label(self.frame, text="Enter the url of the RSS feed:").grid(column=0, row=0)
-        self.rss_entry = tk.Entry(self.frame, width=50)
+        ttk.Label(self.frame, text="Enter the url of the RSS feed:").grid(column=0, row=0)
+        self.rss_entry = ttk.Entry(self.frame, width=50)
         self.rss_entry.grid(column=0, row=1)
-        self.submit_rss_button = tk.Button(self.frame, text="Submit")
+        self.submit_rss_button = ttk.Button(self.frame, text="Submit")
         self.submit_rss_button.grid(column=1, row=1)
       
         

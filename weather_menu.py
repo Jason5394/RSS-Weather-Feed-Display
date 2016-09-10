@@ -7,11 +7,12 @@ from pubsub import pub
 
 
 class AppMenu(tk.Menu):
-    def __init__(self, root, controller, **kwargs): #see if this can be changed 
+    '''Menu class that generates the dropdown menu for the app'''
+    def __init__(self, root, ctrler, **kwargs): #see if this can be changed 
         tk.Menu.__init__(self, root, **kwargs)
         self.weatherdict = {}
-        self.controller = controller
-        self.model = self.controller.model
+        self.ctrler = ctrler
+        self.model = self.ctrler.model
         self.root = root
         self.toplevels = {"load": None, "save": None, "help": None, "about": None}
         
@@ -35,36 +36,38 @@ class AppMenu(tk.Menu):
     def removeTopLevel(self, key):
         print("key:", key)
         '''function called when window that changes rss feed is destroyed.'''
-        self.controller.toplevels[key].destroy()
-        self.controller.toplevels[key] = None 
+        self.ctrler.toplevels[key].destroy()
+        self.ctrler.toplevels[key] = None 
                 
     def loadSavedUrls(self):
-        if not self.controller.toplevels["load"]:
-            self.controller.toplevels["load"] = LoadWindow(self.root, self.controller)
-            self.controller.toplevels["load"].protocol("WM_DELETE_WINDOW",
-                                                        lambda: self.controller.removeTopLevel("load"))
+        if not self.ctrler.toplevels["load"]:
+            self.ctrler.toplevels["load"] = LoadWindow(self.root, self.ctrler,
+                                                title="Load/Delete Saved Feed")
         
     def saveUrl(self):
-        if not self.controller.toplevels["save"]:
-            self.controller.toplevels["save"] = SaveWindow(self.root, self.controller)
-            self.controller.toplevels["save"].protocol("WM_DELETE_WINDOW",
-                                                        lambda: self.controller.removeTopLevel("save"))
+        if not self.ctrler.toplevels["save"]:
+            self.ctrler.toplevels["save"] = SaveWindow(self.root, self.ctrler,
+                                                title="Save RSS Feed")
         
     def showInstructions(self):
         if not self.toplevels["help"]:
-            self.controller.toplevels["help"] = InstructionsWindow(self.root)
-            self.controller.toplevels["help"].protocol("WM_DELETE_WINDOW",
-                                                        lambda: self.controller.removeTopLevel("help"))
+            self.ctrler.toplevels["help"] = InstructionsWindow(self.root,
+                                                title="Help")
+            self.ctrler.toplevels["help"].protocol("WM_DELETE_WINDOW",
+                                                lambda: self.ctrler.removeTopLevel("help"))
                 
     def showAbout(self):
         if not self.toplevels["about"]:
-            self.controller.toplevels["about"] = AboutWindow(self.root)
-            self.controller.toplevels["about"].protocol("WM_DELETE_WINDOW",
-                                                        lambda: self.controller.removeTopLevel("about"))
+            self.ctrler.toplevels["about"] = AboutWindow(self.root,
+                                                title="About")
+            self.ctrler.toplevels["about"].protocol("WM_DELETE_WINDOW",
+                                                lambda: self.ctrler.removeTopLevel("about"))
+        
         
 class InstructionsWindow(view.FormTopLevel):
     def __init__(self, root, **kwargs):
         view.FormTopLevel.__init__(self, root, **kwargs)
+        self.frame.config(padding=6)
         
         instructions = ("This weather app only serves the NOAA's National Weather Service "
         "RSS feed.  To choose a weather feed, go to http://w1.weather.gov/xml/current_obs/seek.php "
@@ -77,23 +80,26 @@ class InstructionsWindow(view.FormTopLevel):
             
         "You can also save feeds by clicking on the File menu and then Save.  Load the saved "
         "feed by pressing \"Load\" and choosing from your saved feeds.")
-        
-        instruct_msg = tk.Message(self.frame, text=instructions, padx=10, pady=10, 
-                                    justify=tk.LEFT, width=400)
-        instruct_msg.grid(column=0, row=0)
+       
+        instruct_text = tk.Text(self.frame, wrap=tk.WORD, height=12, width=60,
+                                font="Calibri")
+        instruct_text.insert(tk.END, instructions)
+        instruct_text.grid(column=0, row=0)
 
+        
 class AboutWindow(view.FormTopLevel):
     def __init__(self, root, **kwargs):
         view.FormTopLevel.__init__(self, root, **kwargs)
-        
+        self.frame.config(padding=6)
         about = ("This app was created by Jason Yang, 2016. The National Oceanic and "
             "Atmospheric Administrations' National Weather Service was the main resource used to pull " 
             "weather information as RSS feeds. All weather parsing and weather data types closely " 
             "model that of the aforementioned feed.")
         
-        about_msg = tk.Message(self.frame, text=about, justify = tk.LEFT,
-                                width=400, padx=10, pady=10)
-        about_msg.grid(column=0, row=0)
+        about_text = tk.Text(self.frame, wrap=tk.WORD, height=5, width=60,
+                                font="Calibri")
+        about_text.insert(tk.END, about)
+        about_text.grid(column=0, row=0)
     
     
 def main():

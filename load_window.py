@@ -7,6 +7,8 @@ class LoadWindow(view.FormTopLevel):
     '''Window that pops up after user presses "Load" in menu dropdown'''
     def __init__(self, root, controller=None, **kwargs):
         view.FormTopLevel.__init__(self, root, **kwargs)
+        self.protocol("WM_DELETE_WINDOW", self.__pressedCancel)
+        
         #get loaded data
         self.saved_urls = controller.model.getSavedUrls()
         self.saved_names = controller.model.getSavedNames()
@@ -77,6 +79,7 @@ class LoadWindow(view.FormTopLevel):
             self.tree.delete(current_item)
             
     def __pressedCancel(self):
+        self.__updateValues()
         self.ctrler.removeTopLevel("load")
         
        

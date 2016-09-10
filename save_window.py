@@ -8,6 +8,8 @@ class SaveWindow(view.FormTopLevel):
     '''Window that appears when user chooses "Save" in menu dropdown.'''
     def __init__(self, root, controller=None, **kwargs):
         view.FormTopLevel.__init__(self, root, **kwargs)
+        self.protocol("WM_DELETE_WINDOW", self.pressedCancel)
+        
         pub.subscribe(self.invalidSave, "invalidSave")
         pub.subscribe(self.validSave, "validSave")
         self.weatherdict = controller.model.getWeatherDict()

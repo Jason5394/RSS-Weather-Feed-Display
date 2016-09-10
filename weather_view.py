@@ -155,12 +155,20 @@ class WeatherView(ttk.Frame):
  
  
 class FormTopLevel(tk.Toplevel):
-
+    '''Generic template for all toplevels used in this weather app.
+       Features to be noted: 
+       1. arguments for setting title and resizable
+          in the constructor
+       2. window popping up +50+50 units relative to
+          parent window
+       3. automatic creation of main frame and configuration
+       4. focus and grabs the window'''
+       
     def __init__(self, root, title=None, resizable=False, **kwargs):
 
         tk.Toplevel.__init__(self, root, **kwargs)
-        #self.transient(root)
         self.root = root
+        self.transient()
         if title:
             self.title(title) 
         if not resizable:
@@ -183,17 +191,20 @@ class FormTopLevel(tk.Toplevel):
         
             
 class ShowSourceWindow(FormTopLevel):
+    '''toplevel window that shows the raw rss feed'''
     def __init__(self, root, src="", **kwargs):
         FormTopLevel.__init__(self, root, **kwargs)
+        self.frame.config(padding=6)
         
-        self.rss_src = src
         ttk.Label(self.frame, text="RSS Source", font="bold").grid(column=0, row=0)
-        rss_src_label = ttk.Label(self.frame, text=self.rss_src)
-        rss_src_label.grid(column=0, row=1)
+        src_text = tk.Text(self.frame, wrap=tk.CHAR, height=38, width=100,
+                            font="Calibri")
+        src_text.insert(tk.END, src)
+        src_text.grid(column=0, row=1)
   
   
 class ChangeRSSWindow(FormTopLevel):
- 
+    '''toplevel window that lets the user change the current weather feed'''
     def __init__(self, root, **kwargs):
         FormTopLevel.__init__(self,root, **kwargs)
         

@@ -17,8 +17,16 @@ class WeatherView(ttk.Frame):
         self.toplevels = {"changeRSS": None, "showFeed": None}
         self.conditions_img = None
         root.title("Weather Forecast")
-        root.geometry("450x280")
         root.resizable(0,0)
+        
+        width = 450
+        height = 280
+        ws = root.winfo_screenwidth()
+        hs = root.winfo_screenheight()
+        x = (ws/2) - (width/2)
+        y = (hs/2) - (height/2)
+        self.root.geometry("%dx%d+%d+%d" % (width, height, x, y))
+        
         #create subframes inside main frame
         self.topframe = ttk.Frame(self, height=40)
         self.midframe = ttk.Frame(self, height=100)
@@ -200,9 +208,6 @@ def main():
     root = tk.Tk()
     root.columnconfigure(0, weight=1)
     root.rowconfigure(0, weight=1)
-    display = WeatherView(root)
-       
-    #display.weatherData.display()
     root.mainloop()
 
 if __name__ == "__main__": main()

@@ -6,13 +6,15 @@ import tkinter.messagebox
 
 class SaveWindow(view.FormTopLevel):
     '''Window that appears when user chooses "Save" in menu dropdown.'''
-    def __init__(self, root, **kwargs):
+    def __init__(self, root, controller=None, **kwargs):
         view.FormTopLevel.__init__(self, root, **kwargs)
         pub.subscribe(self.invalidSave, "invalidSave")
         pub.subscribe(self.validSave, "validSave")
-        self.weatherdict = self.root.model.getWeatherDict()
+        self.weatherdict = controller.model.getWeatherDict()
         self.error_toplevel = None
         self.root = root
+        self.ctrler = controller
+        
         default_entry = ""
         if self.weatherdict:
             if self.weatherdict["url"]:
@@ -43,19 +45,19 @@ class SaveWindow(view.FormTopLevel):
        
     def pressedCancel(self):
         self.unsubscribe()
-        self.root.removeTopLevel("save")
+        self.ctrler.removeTopLevel("save")
         
     def pressedSave(self):
         url = self.url_entry.get()
         name = self.name_entry.get()
-        self.root.model.addSavedUrl(url, name)
+        self.ctrler.model.addSavedUrl(url, name)
         
     def invalidSave(self, message):
         self.error_toplevel = tkinter.messagebox.showerror("Error", message, parent=self)
         
     def validSave(self):
         self.unsubscribe()
-        self.root.removeTopLevel("save")
+        self.ctrler.removeTopLevel("save")
         
     def unsubscribe(self):
         pub.unsubscribe(self.invalidSave, "invalidSave")

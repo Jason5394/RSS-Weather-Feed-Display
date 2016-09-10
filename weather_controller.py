@@ -14,6 +14,14 @@ class WeatherController:
         self.root = root
         self.model = model.WeatherModel()
         url = self.getMostRecentUrl()
+        
+        self.toplevels = {"changeRSS": None,
+                            "showFeed": None,
+                            "load": None,
+                            "save": None,
+                            "help": None,
+                            "about": None}
+                            
         self.mainframe = view.WeatherView(root)
         self.mainframe.refresh_button.config(command=self.pressedUpdate)
         self.mainframe.change_rss_button.config(command=self.pressedChangeRss)
@@ -43,38 +51,38 @@ class WeatherController:
         
     def pressedChangeRss(self):
         print("attempting to change rss feed")
-        if self.mainframe.toplevels["changeRSS"] is None:
-            self.mainframe.toplevels["changeRSS"] = view.ChangeRSSWindow(self.mainframe)
-            self.mainframe.toplevels["changeRSS"].submit_rss_button.config(command=self.pressedSubmit)
-            self.mainframe.toplevels["changeRSS"].rss_entry.bind("<Return>", self.pressedReturnHandler)
-            self.mainframe.toplevels["changeRSS"].protocol("WM_DELETE_WINDOW", lambda: self.removeTopLevel("changeRSS"))
+        if self.toplevels["changeRSS"] is None:
+            self.toplevels["changeRSS"] = view.ChangeRSSWindow(self.mainframe)
+            self.toplevels["changeRSS"].submit_rss_button.config(command=self.pressedSubmit)
+            self.toplevels["changeRSS"].rss_entry.bind("<Return>", self.pressedReturnHandler)
+            self.toplevels["changeRSS"].protocol("WM_DELETE_WINDOW", lambda: self.removeTopLevel("changeRSS"))
     
     def pressedReturnHandler(self, event):
         self.pressedSubmit()
         
     def removeTopLevel(self, key):
         '''function called when window that changes rss feed is destroyed.'''
-        self.mainframe.toplevels[key].destroy()
-        self.mainframe.toplevels[key] = None
+        self.toplevels[key].destroy()
+        self.toplevels[key] = None
         
     def pressedSubmit(self):
         #check validity of URL here
         #if okay, exit out of window and save new url otherwise show warning message
-        rss = self.mainframe.toplevels["changeRSS"].rss_entry.get()
+        rss = self.toplevels["changeRSS"].rss_entry.get()
         print("RSS feed:", rss)
         if wp.WeatherData.isValidRSS(rss):
             self.model.setWeather(rss)
             self.removeTopLevel("changeRSS")
         else:
             print("invalid url")
-            self.error_message = tkinter.messagebox.showerror("Error", "RSS feed is invalid.", parent=self.mainframe.toplevels["changeRSS"])
+            self.error_message = tkinter.messagebox.showerror("Error", "RSS feed is invalid.", parent=self.toplevels["changeRSS"])
                       
     def pressedShowSrc(self):
-        if self.mainframe.toplevels["showFeed"] is None:
+        if self.toplevels["showFeed"] is None:
             weatherdict = self.model.getWeatherDict()
             if weatherdict["rss_feed"]:
-                self.mainframe.toplevels["showFeed"] = view.ShowSourceWindow(self.mainframe, weatherdict["rss_feed"])
-                self.mainframe.toplevels["showFeed"].protocol("WM_DELETE_WINDOW", lambda: self.removeTopLevel("showFeed"))
+                self.toplevels["showFeed"] = view.ShowSourceWindow(self.mainframe, weatherdict["rss_feed"])
+                self.toplevels["showFeed"].protocol("WM_DELETE_WINDOW", lambda: self.removeTopLevel("showFeed"))
             
         
 def main():

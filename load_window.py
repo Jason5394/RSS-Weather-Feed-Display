@@ -5,12 +5,13 @@ from pubsub import pub
 
 class LoadWindow(view.FormTopLevel):
     '''Window that pops up after user presses "Load" in menu dropdown'''
-    def __init__(self, root, **kwargs):
+    def __init__(self, root, controller=None, **kwargs):
         view.FormTopLevel.__init__(self, root, **kwargs)
         #get loaded data
+        self.saved_urls = controller.model.getSavedUrls()
+        self.saved_names = controller.model.getSavedNames()
         self.root = root
-        self.saved_urls = self.root.model.getSavedUrls()
-        self.saved_names = self.root.model.getSavedNames()
+        self.ctrler = controller
         
         #create gui frames
         self.resizable(0,0)
@@ -60,15 +61,15 @@ class LoadWindow(view.FormTopLevel):
             #add names and urls from tree to temporary list
             names.append(self.tree.item(child)["text"])
             urls.append(self.tree.item(child)["values"][0])
-        self.root.model.setSavedLists(names, urls)
+        self.ctrler.model.setSavedLists(names, urls)
         
     def __pressedLoad(self):
         self.__updateValues()
         current_item = self.tree.focus()
         if current_item:
             url = self.tree.item(current_item)["values"][0]
-            self.root.model.setWeather(url)
-        self.root.removeTopLevel("load")
+            self.ctrler.model.setWeather(url)
+        self.ctrler.removeTopLevel("load")
             
     def __pressedDelete(self):
         current_item = self.tree.focus()
@@ -76,6 +77,6 @@ class LoadWindow(view.FormTopLevel):
             self.tree.delete(current_item)
             
     def __pressedCancel(self):
-        self.root.removeTopLevel("load")
+        self.ctrler.removeTopLevel("load")
         
        

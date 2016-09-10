@@ -35,28 +35,32 @@ class AppMenu(tk.Menu):
     def removeTopLevel(self, key):
         print("key:", key)
         '''function called when window that changes rss feed is destroyed.'''
-        self.toplevels[key].destroy()
-        self.toplevels[key] = None 
+        self.controller.toplevels[key].destroy()
+        self.controller.toplevels[key] = None 
                 
     def loadSavedUrls(self):
-        if not self.toplevels["load"]:
-            self.toplevels["load"] = LoadWindow(self)
-            self.toplevels["load"].protocol("WM_DELETE_WINDOW", lambda: self.removeTopLevel("load"))
+        if not self.controller.toplevels["load"]:
+            self.controller.toplevels["load"] = LoadWindow(self.root, self.controller)
+            self.controller.toplevels["load"].protocol("WM_DELETE_WINDOW",
+                                                        lambda: self.controller.removeTopLevel("load"))
         
     def saveUrl(self):
-        if not self.toplevels["save"]:
-            self.toplevels["save"] = SaveWindow(self)
-            self.toplevels["save"].protocol("WM_DELETE_WINDOW", lambda: self.removeTopLevel("save"))
+        if not self.controller.toplevels["save"]:
+            self.controller.toplevels["save"] = SaveWindow(self.root, self.controller)
+            self.controller.toplevels["save"].protocol("WM_DELETE_WINDOW",
+                                                        lambda: self.controller.removeTopLevel("save"))
         
     def showInstructions(self):
         if not self.toplevels["help"]:
-            self.toplevels["help"] = InstructionsWindow(self)
-            self.toplevels["help"].protocol("WM_DELETE_WINDOW", lambda: self.removeTopLevel("help"))
+            self.controller.toplevels["help"] = InstructionsWindow(self.root)
+            self.controller.toplevels["help"].protocol("WM_DELETE_WINDOW",
+                                                        lambda: self.controller.removeTopLevel("help"))
                 
     def showAbout(self):
         if not self.toplevels["about"]:
-            self.toplevels["about"] = AboutWindow(self)
-            self.toplevels["about"].protocol("WM_DELETE_WINDOW", lambda: self.removeTopLevel("about"))
+            self.controller.toplevels["about"] = AboutWindow(self.root)
+            self.controller.toplevels["about"].protocol("WM_DELETE_WINDOW",
+                                                        lambda: self.controller.removeTopLevel("about"))
         
 class InstructionsWindow(view.FormTopLevel):
     def __init__(self, root, **kwargs):

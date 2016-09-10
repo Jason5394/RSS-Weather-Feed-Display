@@ -14,7 +14,6 @@ class WeatherView(ttk.Frame):
         ttk.Frame.__init__(self, root, *args, **kwargs)
         self.root = root
         self.grid(column=0, row=0, sticky="nsew")
-        self.toplevels = {"changeRSS": None, "showFeed": None}
         self.conditions_img = None
         root.title("Weather Forecast")
         root.resizable(0,0)
@@ -116,6 +115,7 @@ class WeatherView(ttk.Frame):
             self.botframe.grid_rowconfigure(row, weight=1)
             
     def setValues(self, weatherdict):
+        '''this function is called whenever data in the weather model changes'''
         print("updating values")
         self.weatherdict = weatherdict
         degree_sign= u'\N{DEGREE SIGN}'

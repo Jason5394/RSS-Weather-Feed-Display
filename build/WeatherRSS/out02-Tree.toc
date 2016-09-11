@@ -1,5 +1,0 @@
-('C:\\Users\\jason\\Documents\\Python\\WeatherRSS\\build\\WeatherRSS\\feedparser-5.2.1-py3.5.egg',
- None,
- {'*.pyo', '*.pyd', '*.py', '*.so', '*.pyc', 'EGG-INFO'},
- 'DATA',
- [])

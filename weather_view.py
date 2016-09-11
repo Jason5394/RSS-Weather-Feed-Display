@@ -52,11 +52,11 @@ class WeatherView(ttk.Frame):
         #create a label for each data member
         self.title_label = ttk.Label(self.topframe, text="Weather Forecast", font="bold")
         
-        self.temperature_label = ttk.Label(self.midframe, textvariable=self.temperature,
-                                            padding=5, font="Calibri, 24") 
+        self.temperature_label = ttk.Label(self.midframe,
+            textvariable=self.temperature, padding=5, font="Calibri, 24") 
         self.conditions_img_label = ttk.Label(self.midframe, image=self.conditions_img)               
-        self.conditions_label = ttk.Label(self.midframe, textvariable=self.conditions,
-                                            padding=5, font="Calibri, 18")    
+        self.conditions_label = ttk.Label(self.midframe,
+            textvariable=self.conditions, padding=5, font="Calibri, 18")    
         
         self.pressure_label = ttk.Label(self.botframe, textvariable=self.pressure)     
         self.humidity_label = ttk.Label(self.botframe, textvariable=self.humidity)      
@@ -177,7 +177,7 @@ class FormTopLevel(tk.Toplevel):
         self.grab_set()
         self.protocol("WM_DELETE_WINDOW", self.removeTopLevel)
         self.geometry("+%d+%d" % (root.winfo_rootx()+50,
-                                  root.winfo_rooty()+50))
+            root.winfo_rooty()+50))
                                   
         self.frame = ttk.Frame(self)   
         self.frame.grid(column=0, row=0)
@@ -198,7 +198,7 @@ class ShowSourceWindow(FormTopLevel):
         
         ttk.Label(self.frame, text="RSS Source", font="bold").grid(column=0, row=0)
         src_text = tk.Text(self.frame, wrap=tk.CHAR, height=38, width=100,
-                            font="Calibri")
+            font="Calibri")
         src_text.insert(tk.END, src)
         src_text.config(state=tk.DISABLED)
         src_text.grid(column=0, row=1)

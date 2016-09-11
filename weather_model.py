@@ -19,11 +19,12 @@ class WeatherModel:
             print("printing url: ", self.url)
         else:
             print("url was not found")
-        
+    
     def __saveToFile(self):
         with open("saved_feeds.pickle", "wb") as handle:
             #pack url list, name list, and current url to dict and save dict to file
-            saved_dict = {"savedNames" : self.saved_names, "savedUrls" : self.saved_urls, "recentUrl" : self.url}
+            saved_dict = {"savedNames" : self.saved_names,
+                "savedUrls" : self.saved_urls, "recentUrl" : self.url}
             pickle.dump(saved_dict, handle)
             
     def __loadFromFile(self):

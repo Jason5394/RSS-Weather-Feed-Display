@@ -43,26 +43,26 @@ class AppMenu(tk.Menu):
     def loadSavedUrls(self):
         if not self.ctrler.toplevels["load"]:
             self.ctrler.toplevels["load"] = LoadWindow(self.root, self.ctrler,
-                                                title="Load/Delete Saved Feed")
+                 title="Load/Delete Saved Feed")
         
     def saveUrl(self):
         if not self.ctrler.toplevels["save"]:
             self.ctrler.toplevels["save"] = SaveWindow(self.root, self.ctrler,
-                                                title="Save RSS Feed")
+                title="Save RSS Feed")
         
     def showInstructions(self):
         if not self.toplevels["help"]:
             self.ctrler.toplevels["help"] = InstructionsWindow(self.root,
-                                                title="Help")
+                title="Help")
             self.ctrler.toplevels["help"].protocol("WM_DELETE_WINDOW",
-                                                lambda: self.ctrler.removeTopLevel("help"))
+                lambda: self.ctrler.removeTopLevel("help"))
                 
     def showAbout(self):
         if not self.toplevels["about"]:
             self.ctrler.toplevels["about"] = AboutWindow(self.root,
-                                                title="About")
+                title="About")
             self.ctrler.toplevels["about"].protocol("WM_DELETE_WINDOW",
-                                                lambda: self.ctrler.removeTopLevel("about"))
+                lambda: self.ctrler.removeTopLevel("about"))
         
         
 class InstructionsWindow(view.FormTopLevel):
@@ -84,14 +84,14 @@ class InstructionsWindow(view.FormTopLevel):
         "You can also save feeds by clicking on the File menu and then Save. Load the saved "
         "feed by pressing Load and choosing from your saved feeds.")
         
-        self.instruct_text = tk.Text(self.frame, wrap=tk.WORD, height=12, width=60,
-                                font="Calibri")
+        self.instruct_text = tk.Text(self.frame, wrap=tk.WORD,
+            height=12, width=60, font="Calibri")
         self.instruct_text.insert(tk.END, instructions)
         self.instruct_text.config(state=tk.DISABLED)
         self.instruct_text.grid(column=0, row=0)
         
         self.link = ttk.Label(self.frame, text=self.homepage,
-                                font="Calibri", foreground="blue", cursor="hand2")
+             font="Calibri", foreground="blue", cursor="hand2")
         self.link.bind("<Button-1>", self.gotoHomepage)
         self.link.grid(column=0, row=1)
         
@@ -114,8 +114,8 @@ class AboutWindow(view.FormTopLevel):
             "weather information as RSS feeds. All weather parsing and weather data types closely " 
             "model that of the aforementioned feed.")
         
-        about_text = tk.Text(self.frame, wrap=tk.WORD, height=5, width=60,
-                                font="Calibri")
+        about_text = tk.Text(self.frame, wrap=tk.WORD,
+            height=5, width=60, font="Calibri")
         about_text.insert(tk.END, about)
         about_text.config(state=tk.DISABLED)
         about_text.grid(column=0, row=0)

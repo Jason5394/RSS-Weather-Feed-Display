@@ -34,8 +34,10 @@ class SaveWindow(view.FormTopLevel):
         self.url_entry = ttk.Entry(self.frame1, width=50)
         self.url_entry.insert(0, default_entry)
         self.name_entry = ttk.Entry(self.frame1, width=50)
-        self.submit_button = ttk.Button(self.frame2, text="Save", width=10, command=self.pressedSave)
-        self.cancel_button = ttk.Button(self.frame2, text="Cancel", width=10, command=self.pressedCancel)
+        self.submit_button = ttk.Button(self.frame2,
+            text="Save", width=10, command=self.pressedSave)
+        self.cancel_button = ttk.Button(self.frame2,
+            text="Cancel", width=10, command=self.pressedCancel)
         #place widgets
         self.instruct_label.grid(column=0, row=0, columnspan=2)
         self.name_label.grid(column=0, row=1, sticky=tk.E)
@@ -55,7 +57,8 @@ class SaveWindow(view.FormTopLevel):
         self.ctrler.model.addSavedUrl(url, name)
         
     def invalidSave(self, message):
-        self.error_toplevel = tkinter.messagebox.showerror("Error", message, parent=self)
+        self.error_toplevel = tkinter.messagebox.showerror("Error",
+            message, parent=self)
         
     def validSave(self):
         self.unsubscribe()

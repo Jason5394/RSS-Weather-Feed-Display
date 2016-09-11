@@ -200,6 +200,7 @@ class ShowSourceWindow(FormTopLevel):
         src_text = tk.Text(self.frame, wrap=tk.CHAR, height=38, width=100,
                             font="Calibri")
         src_text.insert(tk.END, src)
+        src_text.config(state=tk.DISABLED)
         src_text.grid(column=0, row=1)
   
   

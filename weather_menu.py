@@ -1,6 +1,7 @@
 import tkinter as tk
 import tkinter.messagebox
 import weather_view as view
+import webbrowser
 from save_window import *
 from load_window import *
 from pubsub import pub
@@ -69,22 +70,39 @@ class InstructionsWindow(view.FormTopLevel):
         view.FormTopLevel.__init__(self, root, **kwargs)
         self.frame.config(padding=6)
         
+        self.homepage = "http://w1.weather.gov/xml/current_obs/seek.php"
         instructions = ("This weather app only serves the NOAA's National Weather Service "
-        "RSS feed.  To choose a weather feed, go to http://w1.weather.gov/xml/current_obs/seek.php "
-        "and copy the url.  Click on the \"Change feed\" button and enter the url.  The "
-        "correct weather information should populate. \n\n"
+        "RSS feed. To choose a weather feed, click on the website below. Navigate to "
+        "your desired weather RSS feed and copy the url. "
+        "Click on the Change feed button and paste the url. The "
+        "corresponding weather information should populate the window. \n\n"
             
-        "By pressing on the \"Show source\" button, you can view your RSS feed in its raw "
-        "form.  Pressing \"Update\" attempts to retrieve updates from the current feed and displays "
+        "By pressing on the Show source button, you can view your RSS feed in its raw "
+        "form. Pressing Update attempts to retrieve updates from the current feed and displays "
         "the newly changed results on the screen. \n\n"
             
-        "You can also save feeds by clicking on the File menu and then Save.  Load the saved "
-        "feed by pressing \"Load\" and choosing from your saved feeds.")
-       
-        instruct_text = tk.Text(self.frame, wrap=tk.WORD, height=12, width=60,
+        "You can also save feeds by clicking on the File menu and then Save. Load the saved "
+        "feed by pressing Load and choosing from your saved feeds.")
+        
+        self.instruct_text = tk.Text(self.frame, wrap=tk.WORD, height=12, width=60,
                                 font="Calibri")
-        instruct_text.insert(tk.END, instructions)
-        instruct_text.grid(column=0, row=0)
+        self.instruct_text.insert(tk.END, instructions)
+        self.instruct_text.config(state=tk.DISABLED)
+        self.instruct_text.grid(column=0, row=0)
+        
+        self.link = ttk.Label(self.frame, text=self.homepage,
+                                font="Calibri", foreground="blue", cursor="hand2")
+        self.link.bind("<Button-1>", self.gotoHomepage)
+        self.link.grid(column=0, row=1)
+        
+    def gotoHomepage(self, event):
+        print("Going to homepage")
+        webbrowser.open_new(self.homepage)
+    
+    def setCursorType(self, event, type="left_ptr"):
+        print(type)
+        self.instruct_text.config(cursor=type)
+        
 
         
 class AboutWindow(view.FormTopLevel):
@@ -99,6 +117,7 @@ class AboutWindow(view.FormTopLevel):
         about_text = tk.Text(self.frame, wrap=tk.WORD, height=5, width=60,
                                 font="Calibri")
         about_text.insert(tk.END, about)
+        about_text.config(state=tk.DISABLED)
         about_text.grid(column=0, row=0)
     
     

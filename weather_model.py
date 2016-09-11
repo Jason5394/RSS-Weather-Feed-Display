@@ -2,14 +2,16 @@ import weather_parser as wp
 import pickle
 from pubsub import pub
 
-class WeatherModel: 
+
+class WeatherModel:
     '''
     Model in the MVC of the application.
     '''
+
     def __init__(self):
         self.weatherObj = None
         self.weather_dict = None
-        self.url = None   
+        self.url = None
         self.saved_urls = []
         self.saved_names = []
         self.__loadFromFile()
@@ -19,23 +21,24 @@ class WeatherModel:
             print("printing url: ", self.url)
         else:
             print("url was not found")
-    
+
     def __saveToFile(self):
         with open("saved_feeds.pickle", "wb") as handle:
-            #pack url list, name list, and current url to dict and save dict to file
-            saved_dict = {"savedNames" : self.saved_names,
-                "savedUrls" : self.saved_urls, "recentUrl" : self.url}
+            # pack url list, name list, and current url to dict and save dict
+            # to file
+            saved_dict = {"savedNames": self.saved_names,
+                          "savedUrls": self.saved_urls, "recentUrl": self.url}
             pickle.dump(saved_dict, handle)
-            
+
     def __loadFromFile(self):
         try:
             with open("saved_feeds.pickle", "rb") as handle:
                 try:
                     dict = pickle.load(handle)
-                    print("dict:",dict)
+                    print("dict:", dict)
                     self.saved_urls = dict["savedUrls"]
                     self.saved_names = dict["savedNames"]
-                    if wp.WeatherData.isValidRSS(dict["recentUrl"]): 
+                    if wp.WeatherData.isValidRSS(dict["recentUrl"]):
                         self.setWeather(dict["recentUrl"])
                     else:
                         self.url = None
@@ -45,16 +48,18 @@ class WeatherModel:
                     print("No data from file")
                     self.__clear()
                 except pickle.UnpicklingError:
-                    print("Problem unpickling saved data.  Program will wipe corrupt data.")
-                    #TODO: implement wiping of persistent data on file
-                    self.__clear()  #clears local data
-                    emptydict = {"savedNames" : None, "savedUrls" : None, "recentUrl" : None}
+                    print(
+                        "Problem unpickling saved data.  Program will wipe corrupt data.")
+                    # TODO: implement wiping of persistent data on file
+                    self.__clear()  # clears local data
+                    emptydict = {"savedNames": None,
+                                 "savedUrls": None, "recentUrl": None}
                     self.__saveToFile()
         except FileNotFoundError:
             print("FileNotFoundError caught")
             self.__clear()
             return
-        
+
     def __clear(self):
         '''sets all member variables to be None or empty'''
         self.weatherObj = None
@@ -62,26 +67,28 @@ class WeatherModel:
         self.url = None
         self.saved_urls = []
         self.saved_names = []
-        
+
     def setSavedLists(self, names, urls):
-        #update local lists
+        # update local lists
         self.saved_urls = urls
         self.saved_names = names
-        #save to pickle file
+        # save to pickle file
         self.__saveToFile()
-        
+
     def setWeather(self, url):
         self.url = url
         self.__saveToFile()
         self.weatherObj = wp.WeatherData(self.url)
-        self.weather_dict = self.weatherObj.__dict__ #dictionary that contains all weatherObj attributes
+        # dictionary that contains all weatherObj attributes
+        self.weather_dict = self.weatherObj.__dict__
         pub.sendMessage("valuesChanged", weather_dict=self.weather_dict)
 
     def addSavedUrl(self, saved_url, saved_name):
         print("saved_url:", saved_url, "saved_name:", saved_name)
         if saved_name in self.saved_names:
             print("sending invalidurl message:")
-            pub.sendMessage("invalidSave", message="RSS feed name already exists.")
+            pub.sendMessage(
+                "invalidSave", message="RSS feed name already exists.")
         elif saved_url in self.saved_urls:
             pub.sendMessage("invalidSave", message="RSS url already exists.")
         else:
@@ -90,25 +97,18 @@ class WeatherModel:
             self.saved_names.insert(0, saved_name)
             self.__saveToFile()
             pub.sendMessage("validSave")
-            
-    def getUrl(self):   
+
+    def getUrl(self):
         return self.url
-        
+
     def getWeatherObj(self):
         return self.weatherObj
-        
+
     def getWeatherDict(self):
         return self.weather_dict
-        
+
     def getSavedUrls(self):
         return self.saved_urls
-        
+
     def getSavedNames(self):
         return self.saved_names
-        
-        
-        
-        
-        
-        
-        

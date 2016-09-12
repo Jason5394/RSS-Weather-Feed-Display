@@ -2,4 +2,6 @@ todo.txt
 saved_feeds.pickle
 build/*
 dist/*
+*.pyc
+*.pyo
 WeatherRss.spec

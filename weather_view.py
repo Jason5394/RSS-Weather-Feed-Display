@@ -17,9 +17,9 @@ class WeatherView(ttk.Frame):
         self.root = root
         self.grid(column=0, row=0, sticky="nsew")
         self.conditions_img = None
+        root.iconbitmap(default="appicon.ico")
         root.title("Weather Forecast")
         root.resizable(0, 0)
-
         width = 450
         height = 280
         ws = root.winfo_screenwidth()

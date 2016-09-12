@@ -74,7 +74,7 @@ class InstructionsWindow(view.FormTopLevel):
         self.frame.config(padding=6)
 
         self.homepage = "http://w1.weather.gov/xml/current_obs/seek.php"
-        instructions = ("This weather app only serves the NOAA's National Weather Service "
+        instructions = ("This weather app only works with the NOAA's National Weather Service "
                         "RSS feed. To choose a weather feed, click on the website below. Navigate to "
                         "your desired weather RSS feed and copy the url. "
                         "Click on the Change feed button and paste the url. The "
